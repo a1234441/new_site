@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 // グリッドサイズとボード設定
 const gridSize = 6;
-const cellSize = canvas.width / gridSize;
+let cellSize;
 const board = Array(gridSize).fill().map(() => Array(gridSize).fill(0));  // 0 = 空, 1 = 黒, -1 = 白
 let currentPlayer = 1;  // 1: 黒, -1: 白
 let vec_table = [
@@ -11,6 +11,8 @@ let vec_table = [
     [-1, 0], [1, 0],  // 左、右
     [-1, 1], [0, 1], [1, 1]  // 左下、下、右下
 ];
+
+
 
 
 // 石の描画
@@ -33,7 +35,6 @@ function drawBoard() {
             if (board[row][col] === 3 ) {
                 ctx.fillStyle = 'darkred';
                 ctx.fillRect(col * cellSize+1, row * cellSize+1, cellSize-2, cellSize-2);
-                board[row][col] = 0;  // その後、値を0にして配列に代入
                 continue;
             }
             if (board[row][col] === 2 || board[row][col] === -2) {
@@ -52,6 +53,18 @@ function drawBoard() {
     }
 }
 
+// ウィンドウ幅に基づいてキャンバスをリサイズ
+function resizeCanvas() {
+    const screenSize = Math.min(window.innerWidth * 0.8, 600); // 最大600pxまで
+    canvas.width = screenSize;
+    canvas.height = screenSize;
+    cellSize = canvas.width / gridSize;
+    drawBoard();
+}
+
+
+
+
 function ReturnBoard(row , col) {
     let player = currentPlayer;
     for (let [vx, vy] of vec_table) {
@@ -63,6 +76,11 @@ function ReturnBoard(row , col) {
             flipList.push([x, y]);x += vx;y += vy;
             if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && board[y][x] === player)// プレイヤーの石がある場合は、ひっくり返し実行
                 for (let [flipX, flipY] of flipList)  board[flipY][flipX] = player;
+        }
+    }
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            if (board[row][col] === 3) board[row][col] = 0;
         }
     }
 }
@@ -104,7 +122,7 @@ canvas.addEventListener('click', (event) => {
     const col = Math.floor(x / cellSize);
 
     // クリックしたセルが空であれば石を置く
-    if (board[row][col] === 0) {
+    if (board[row][col] === 3) {
         board[row][col] = currentPlayer*2;
         ReturnBoard(row, col);
         currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
@@ -120,6 +138,7 @@ function Reset() {
     board[3][2] = 1;   // 黒
     board[3][3] = -1;  // 白
     GetPositions();
-    drawBoard();
+    resizeCanvas();
 }
 Reset();
+window.addEventListener('resize', resizeCanvas);

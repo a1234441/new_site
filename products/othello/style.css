@@ -36,9 +36,10 @@ nav a:hover {
 
 /* オセロゲーム用のスタイル */
 #othelloBoard {
-    border: 2px solid black;
     display: block;
     margin: 20px auto;
+    max-width: 100%;
+    height: auto;
 }
 
 .status {
@@ -46,7 +47,3 @@ nav a:hover {
     font-size: 24px;
     margin-top: 20px;
 }
-
-.cell.latest {
-    background-color: #add8e6; /* 水色 */
-  }
