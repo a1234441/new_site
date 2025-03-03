@@ -118,14 +118,14 @@ function GetPositions() {
                 for (let [vx, vy] of vec_table) {
                     let x = col + vx;let y = row + vy;
                     // マスの範囲内、かつプレイヤーの石と異なる石がある場合、その方向は引き続きチェック
-                    if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && board[y][x] === -player) {
+                    if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && (board[y][x] === -player || board[y][x] === -2*player )) {
                         while (true) {
                             x += vx;y += vy;
                             // プレイヤーの石と異なる色の石がある場合、その方向は引き続きチェック
-                            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && board[y][x] === -player && board[y][x] !== 3) 
+                            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && (board[y][x] === -player || board[y][x] === -2*player ) && board[y][x] !== 3) 
                                 continue;
                             // プレイヤーの石と同色の石がある場合、石を置けるためインデックスを保存
-                            else if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && board[y][x] === player && board[y][x] !== 3) {
+                            else if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && (board[y][x] === player || board[y][x] === 2*player ) && board[y][x] !== 3) {
                                 board[row][col] = 3;
                                 posnum++;
                                 break;
