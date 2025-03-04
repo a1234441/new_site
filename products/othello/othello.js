@@ -7,7 +7,7 @@ const ctx = canvas.getContext('2d');
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
-let normaldepth=10;
+let normaldepth=3;
 let lastdepth=18;
 
 
@@ -220,13 +220,15 @@ canvas.addEventListener('click',async (event) => {
             }
         }
         document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
-        
-
         //AIのターン
         while(true){//置けなくなるまでひたすら置いていく
             drawBoard();
             await sleep(1000);//読む深さによってここの時間を変更する
+            const start = performance.now();
             let put= AI();
+            const end = performance.now();
+            console.log(`実行時間: ${(end - start).toFixed(4)} ms`);
+            
             let putrow = Math.floor((put-1) / 6);
             let putcol = (put-1) % 6;
             ReturnBoard(putrow, putcol);
@@ -309,8 +311,10 @@ function Reset() {
 
 document.getElementById('startButton').addEventListener('click', () => {
     const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-    console.log("難易度:",difficulty);
-    mode = true ? difficulty === 1 : false;
+    //console.log("難易度:",difficulty);
+    mode = true ? Number(difficulty) === 1 : false;
+    //mode = true ? difficulty === 1 : false;
+    console.log("mode:",mode);
     AIplayer = document.querySelector('input[name="turn"]:checked').value;
 
     console.log("turn:",AIplayer);
@@ -652,7 +656,8 @@ function evaluate(b) {
     
     if (playerscore === 0) count = -64 * 64 * 2 + opponentscore;
     if (opponentscore === 0) count = 64 * 64 * 2 - playerscore;
-    if (!mode) count = -count;
+    if (!mode) {count = -count;console.log("count:",count);}
+    
     
     return count;
 }
@@ -696,6 +701,10 @@ function Nega_alpha(b, depth, passed, alpha, beta) {
         //console.log("last")
         return lastEvaluate1(b, getNumberZeros(~(0xFFFFFFF000000000n | b.playerBoard | b.opponentBoard)), false);
     }
+
+    //console.log("depth: " + depth);
+    //displayBoard(b);
+
     if (depth === 0)
         return evaluate(b);
 
@@ -710,6 +719,7 @@ function Nega_alpha(b, depth, passed, alpha, beta) {
         let newB = structuredClone(b);
         newB = putStone(newB, bitposition);
         let g = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+        //console.log("score: " + g);
         if (g >= beta) return g;
         alpha = Math.max(alpha, g);
         max_score = Math.max(max_score, g);
@@ -743,6 +753,7 @@ function Search(b) {
         let newB = structuredClone(b);
         newB = putStone(newB, bitposition);
         score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+        console.log("coord:"+ coord + " score:" + score);
         if (alpha < score) {
             alpha = score;
             res = coord;
