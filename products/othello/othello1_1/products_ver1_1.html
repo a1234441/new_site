@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>縮小強解決オセロ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="../../index.html">ホーム</a>
+        <a href="../../indexs/product_host.html">Product</a>
+        <a href="../../indexs/dairy_host.html">Article</a>
+        <a href="../../indexs/contact.html">Contact</a>
+    </nav>
+
+    <div class="container">
+        <h1>縮小強解決オセロ</h1>
+        <p>6✕6におけるオセロを強解決し、その定石を基に石を打つオセロです。ネットに転がっている6✕6オセロボットとの大きな違いは、必ず最適な場所に着手するという点です。</p>
+        <p>まだ工事中なので、最適解ではなくそこそこ強い手を打ちます。</p>
+        <p>※スマホだと重い可能性があります。</p>
+        <br>
+        <div class="game-settings">
+            <label for="difficulty">ゲームの難易度を選んでください：</label><br>
+            
+            <input type="radio" id="strong" name="difficulty" value="1" checked>
+            <label for="strong">最強モード</label><br>
+            
+            <input type="radio" id="weak" name="difficulty" value="-1">
+            <label for="weak">最弱モード</label><br>
+            
+            <label for="difficulty">AIの手番:</label><br>
+            
+            <input type="radio" id="before" name="turn" value="1" checked>
+            <label for="strong">先手</label><br>
+            
+            <input type="radio" id="after" name="turn" value="-1">
+            <label for="weak">後手</label><br>
+
+            <button id="startButton">ゲーム開始</button>
+        </div>
+        <canvas id="othelloBoard"></canvas>
+        <div class="status" id="status">黒のターン</div>
+    </div>
+
+    <br><br><br>
+    <a href="../../index.html">ホーム</a>
+    <script src="othello.js"></script>
+</body>
+</html>
