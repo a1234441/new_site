@@ -177,6 +177,9 @@ function AI(){
         }
         //console.log(row1);
     } 
+
+
+
     let strong_;
     if(mode===true)strong_=1;
     else strong_=-1
@@ -185,7 +188,8 @@ function AI(){
     if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 19) depth = lastdepth;
     else depth = normaldepth;
     //どこに置くべきか決定する
-    let pos=Module._Search(OthelloBoard.opponentBoard,OthelloBoard.opponentBoard,depth,strong_);
+    console.log("depth:",depth);
+    let pos=Module._Search(OthelloBoard.playerBoard,OthelloBoard.opponentBoard,depth,strong_);
     console.log(pos);
     return pos;
 }
@@ -407,13 +411,14 @@ function displayLegal(board) {
     for (let i = 0; i < SIZE; ++i) {
         let row = '';
         for (let j = 0; j < SIZE; ++j) {   
-            let bit = 1 << (SIZE - 1 - i) * SIZE + (SIZE - 1 - j);
+            let bit = 1n << BigInt((SIZE - 1 - i) * SIZE + (SIZE - 1 - j));
             row += (board & bit) ? 'o ' : '. '; // 石か空きかを表示
         }
         console.log(row);
     }
     console.log('');
 }
+
 
 // `b`のボード情報を基に、プレイヤーの石（黒・白）や空きの状態を表示する関数
 function displayBoard(b) {
