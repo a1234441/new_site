@@ -7,7 +7,7 @@ const ctx = canvas.getContext('2d');
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
-let normaldepth=3;
+let normaldepth=10;
 let lastdepth=18;
 
 
@@ -29,8 +29,10 @@ async function sleep(ms) {
 
 
 let OthelloBoard = {
-    playerBoard: 0n,
-    opponentBoard: 0n, 
+    playerBoardup: 0,
+    playerBoarddown: 0,
+    opponentBoardup: 0,
+    opponentBoarddown: 0,
     turn: 0 
 };
 
@@ -161,8 +163,14 @@ function displayBoard(b) {
 
 function AI(){
     //AIとプレイヤーの石をビットに変換する
-    OthelloBoard.playerBoard = 0n;
-    OthelloBoard.opponentBoard = 0n;
+    OthelloBoard.playerBoardup = 0;
+    OthelloBoard.opponentBoardup = 0;
+    OthelloBoard.playerBoarddown = 0;
+    OthelloBoard.opponentBoarddown = 0;
+    OthelloBoard.playerBoardup = OthelloBoard.playerBoardup>>>0;
+    OthelloBoard.opponentBoardup = OthelloBoard.opponentBoardup>>>0;
+    OthelloBoard.playerBoarddown = OthelloBoard.playerBoarddown>>>0;
+    OthelloBoard.opponentBoarddown = OthelloBoard.opponentBoarddown>>>0;
     OthelloBoard.turn = AIplayer;
     
     for (let row = 0; row < gridSize; row++) {
@@ -170,11 +178,13 @@ function AI(){
         for (let col = 0; col < gridSize; col++) {
             if (Number(board[row][col]) === Number(AIplayer) || board[row][col] === Number(AIplayer)*2) {
                 row1 += 'B '; // 黒の石
-                OthelloBoard.playerBoard |= 1n << BigInt((5-row)*6+(5-col));
+                if(row<3)OthelloBoard.playerBoardup |= 1 << ((2-row)*6+(5-col));
+                else OthelloBoard.playerBoarddown |= 1 << ((5-row)*6+(5-col));
             }
             else if (Number(board[row][col]) === -Number(AIplayer) || board[row][col] === -Number(AIplayer)*2) {
                 row1 += 'W '; // 白の石
-                OthelloBoard.opponentBoard |= 1n << BigInt((5-row)*6+(5-col));
+                if(row<3)OthelloBoard.opponentBoardup |= 1 << ((2-row)*6+(5-col));
+                else OthelloBoard.opponentBoarddown |= 1 << ((5-row)*6+(5-col));
             } 
             else row1+= '. '; // 空き
         }
@@ -257,6 +267,7 @@ canvas.addEventListener('click',async (event) => {
 
 function CountStone(player){
     let num=0;
+
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
             if (board[i][j] === player || board[i][j] === 2*player) num++;
@@ -311,10 +322,8 @@ function Reset() {
 
 document.getElementById('startButton').addEventListener('click', () => {
     const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-    //console.log("難易度:",difficulty);
+    console.log("難易度:",difficulty);
     mode = true ? Number(difficulty) === 1 : false;
-    //mode = true ? difficulty === 1 : false;
-    console.log("mode:",mode);
     AIplayer = document.querySelector('input[name="turn"]:checked').value;
 
     console.log("turn:",AIplayer);
@@ -338,131 +347,6 @@ window.addEventListener('resize', resizeCanvas);
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-const outflank=
-[[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x04,0x00,0x01,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x08,0x00,0x02,0x00,0x00],[0x00,0x08,0x00,0x02,0x00,0x00],[0x08,0x00,0x00,0x01,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x10,0x00,0x04,0x00],[0x00,0x00,0x10,0x00,0x04,0x00],[0x04,0x00,0x11,0x00,0x04,0x00],[0x00,0x00,0x10,0x00,0x04,0x00],
-[0x00,0x10,0x00,0x00,0x02,0x00],[0x00,0x10,0x00,0x00,0x02,0x00],[0x10,0x00,0x00,0x00,0x01,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x00,0x20,0x00,0x08],[0x00,0x00,0x00,0x20,0x00,0x08],[0x04,0x00,0x01,0x20,0x00,0x08],[0x00,0x00,0x00,0x20,0x00,0x08],
-[0x00,0x08,0x00,0x22,0x00,0x08],[0x00,0x08,0x00,0x22,0x00,0x08],[0x08,0x00,0x00,0x21,0x00,0x08],[0x00,0x00,0x00,0x20,0x00,0x08],
-[0x00,0x00,0x20,0x00,0x00,0x04],[0x00,0x00,0x20,0x00,0x00,0x04],[0x04,0x00,0x21,0x00,0x00,0x04],[0x00,0x00,0x20,0x00,0x00,0x04],
-[0x00,0x20,0x00,0x00,0x00,0x02],[0x00,0x20,0x00,0x00,0x00,0x02],[0x20,0x00,0x00,0x00,0x00,0x01],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x04,0x00,0x01,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x08,0x00,0x02,0x00,0x00],[0x00,0x08,0x00,0x02,0x00,0x00],[0x08,0x00,0x00,0x01,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x10,0x00,0x04,0x00],[0x00,0x00,0x10,0x00,0x04,0x00],[0x04,0x00,0x11,0x00,0x04,0x00],[0x00,0x00,0x10,0x00,0x04,0x00],
-[0x00,0x10,0x00,0x00,0x02,0x00],[0x00,0x10,0x00,0x00,0x02,0x00],[0x10,0x00,0x00,0x00,0x01,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x04,0x00,0x01,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x08,0x00,0x02,0x00,0x00],[0x00,0x08,0x00,0x02,0x00,0x00],[0x08,0x00,0x00,0x01,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x04,0x00,0x01,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00]];
-
-
-const fliplen=
-[[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x02,0x06,0x0e,0x1e],[0x00,0x00,0x00,0x04,0x0c,0x1c],[0x00,0x00,0x00,0x04,0x0c,0x1c],
-[0x02,0x00,0x00,0x00,0x08,0x18],[0x00,0x00,0x00,0x00,0x08,0x18],[0x00,0x00,0x00,0x00,0x08,0x18],[0x00,0x00,0x00,0x00,0x08,0x18],
-[0x06,0x04,0x00,0x00,0x00,0x10],[0x00,0x04,0x02,0x00,0x00,0x10],[0x00,0x00,0x00,0x00,0x00,0x10],[0x00,0x00,0x00,0x00,0x00,0x10],
-[0x02,0x00,0x00,0x00,0x00,0x10],[0x00,0x00,0x00,0x00,0x00,0x10],[0x00,0x00,0x00,0x00,0x00,0x10],[0x00,0x00,0x00,0x00,0x00,0x10],
-[0x0e,0x0c,0x08,0x00,0x00,0x00],[0x00,0x0c,0x0a,0x06,0x00,0x00],[0x00,0x00,0x08,0x04,0x00,0x00],[0x00,0x00,0x08,0x04,0x00,0x00],
-[0x02,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x06,0x04,0x00,0x00,0x00,0x00],[0x00,0x04,0x02,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x02,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x1e,0x1c,0x18,0x10,0x00,0x00],[0x00,0x1c,0x1a,0x16,0x0e,0x00],[0x00,0x00,0x18,0x14,0x0c,0x00],[0x00,0x00,0x18,0x14,0x0c,0x00],
-[0x02,0x00,0x00,0x10,0x08,0x00],[0x00,0x00,0x00,0x10,0x08,0x00],[0x00,0x00,0x00,0x10,0x08,0x00],[0x00,0x00,0x00,0x10,0x08,0x00],
-[0x06,0x04,0x00,0x00,0x00,0x00],[0x00,0x04,0x02,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x02,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x0e,0x0c,0x08,0x00,0x00,0x00],[0x00,0x0c,0x0a,0x06,0x00,0x00],[0x00,0x00,0x08,0x04,0x00,0x00],[0x00,0x00,0x08,0x04,0x00,0x00],
-[0x02,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x06,0x04,0x00,0x00,0x00,0x00],[0x00,0x04,0x02,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],
-[0x02,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00],[0x00,0x00,0x00,0x00,0x00,0x00]];
-
-
-
-const lastFlipNum=
-[[0,0,0,0,0,0],[0,0,1,2,3,4],[0,0,0,1,2,3],[0,0,0,1,2,3],[1,0,0,0,1,2],[0,0,0,0,1,2],[0,0,0,0,1,2],[0,0,0,0,1,2],
-[2,1,0,0,0,1],[0,1,1,0,0,1],[0,0,0,0,0,1],[0,0,0,0,0,1],[1,0,0,0,0,1],[0,0,0,0,0,1],[0,0,0,0,0,1],[0,0,0,0,0,1],
-[3,2,1,0,0,0],[0,2,2,2,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[1,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],
-[2,1,0,0,0,0],[0,1,1,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[1,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],
-[4,3,2,1,0,0],[0,3,3,3,3,0],[0,0,2,2,2,0],[0,0,2,2,2,0],[1,0,0,1,1,0],[0,0,0,1,1,0],[0,0,0,1,1,0],[0,0,0,1,1,0],
-[2,1,0,0,0,0],[0,1,1,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[1,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],
-[3,2,1,0,0,0],[0,2,2,2,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[1,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],
-[2,1,0,0,0,0],[0,1,1,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[1,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]];
-
-const d7RightShift = [0, 0, 18, 12, 6, 0, 1, 2, 3, 0, 0];
-const d7Mask = [
-  0n, 0n, 0x102040000n, 0x204081000n,
-  0x408102040n, 0x810204081n, 0x20408102n,
-  0x810204n, 0x20408n, 0n, 0n
-];
-
-const d5LeftShift = [0, 0, 3, 2, 1, 0, 0, 0, 0, 0, 0];
-const d5RightShift = [0, 0, 0, 0, 0, 0, 6, 12, 18, 0, 0];
-const d5Mask = [
-  0n, 0n, 0x1084n, 0x42108n, 0x1084210n,
-  0x42108420n, 0x84210800n, 0x108420000n,
-  0x210800000n, 0n, 0n
-];
-
-// t = x + y
-function change5line(index, t) {
-    index &= d5Mask[t];
-    index <<= BigInt(d5LeftShift[t]); // BigInt 型に変換
-    index >>= BigInt(d5RightShift[t]); // BigInt 型に変換
-    return Number((((index * 0x2220n) & 0xE00000000n) | ((index * 0x2220000n) & 0x1C0000000n)) >> 30n);
-  }
-  
-  // t = x + 5 - y
-  function change7line(index, t) {
-    index &= d7Mask[t];
-    index >>= BigInt(d7RightShift[t]); // BigInt 型に変換
-    return Number(((index * 0x41041041n) & 0xFC0000000n) >> 30n);
-  }
-  
-  // t = y
-  function changeRline(index, t) {
-    return Number(((index << BigInt((5 - t) * 6)) & 0xFC0000000n) >> 30n); // BigInt 型に変換
-  }
-  
-  // t = x
-  function changeCline(index, t) {
-    index = 0x41041041n & (index >> BigInt(t)); // BigInt 型に変換
-    return Number(((index * 0x42108420n) & 0xFC0000000n) >> 30n);
-  }
-  
-  // t = x + y
-  function dechange5line(index, t) {
-    let index1 = (((index & 0x38n) * 0x2220000n) | ((index & 0x7n) * 0x2220n)) & 0x42108420n;
-    index1 <<= BigInt(d5RightShift[t]); // BigInt 型に変換
-    index1 >>= BigInt(d5LeftShift[t]); // BigInt 型に変換
-    index1 &= d5Mask[t];
-    return index1;
-  }
-  
-  // t = x + 5 - y
-  function dechange7line(index, t) {
-    let index1 = ((index & 0x3Fn) * 0x41041041n) & 0x810204081n;
-    index1 <<= BigInt(d7RightShift[t]); // BigInt 型に変換
-    index1 &= d7Mask[t];
-    return index1;
-  }
-  
-// t = y
-function dechangeRline(index, t) {
-  return (index & 0x3Fn) << (6 * t);
-}
-
-// t = x
-function dechangeCline(index, t) {
-  let index1 = (((index & 0x38n) * 0x2108000n) | ((index & 0x7n) * 0x421n)) & 0x41041041n;
-  return index1 << t;
-}
-
-function initializeTable() {
-    let hash = 0x03F566ED27179461n; // BigInt型を使用
-    for (let i = 0; i < 64; i++) {
-        table[Number(hash >> 58n)] = i; // 58ビットシフトし、インデックスとして使用
-        hash <<= 1n; // 左に1ビットシフト
-    }
-}
 
 function getNumberZeros(x) {
     if (x === 0) return 64;
@@ -471,261 +355,389 @@ function getNumberZeros(x) {
     return table[i];
 }
 
-function countBit(board) {
-    board = board - ((board >> 1n) & 0x5555555555555555n); 
-    board = (board & 0x3333333333333333n) + ((board >> 2n) & 0x3333333333333333n);
-    board = (board + (board >> 4n)) & 0x0f0f0f0f0f0f0f0fn;
-    board = board + (board >> 8n);
-    board = board + (board >> 16n);
-    board = board + (board >> 32n);
-    return Number(board & 0x0000007fn);
+function countBit(x1, x0) {
+    let t0 = x1 - (x1 >>> 1 & 0x55555555);
+    t0 = (t0 & 0x33333333) + ((t0 & 0xcccccccc) >>> 2);
+    let t1 = x0 - (x0 >>> 1 & 0x55555555);
+    t0 += (t1 & 0x33333333) + ((t1 & 0xcccccccc) >>> 2);
+    t0 = (t0 & 0x0f0f0f0f) + ((t0 & 0xf0f0f0f0) >>> 4);
+    return t0 * 0x01010101 >>> 24;
+}
+function initializeTable() {
+    let hash = 0x03F566ED27179461n; // BigInt型を使用
+    for (let i = 0; i < 64; i++) {
+        table[Number(hash >> 58n)] = i; // 58ビットシフトし、インデックスとして使用
+        hash <<= 1n; // 左に1ビットシフト
+    }
 }
 
-function makeLegalBoard(p, o) {
-    let colmask = o & 0x000000079E79E79En; 
-    let rowmask = o & 0x000000003FFFFFC0n;
-    let allsidemask = o & 0x000000001E79E780n; 
-    let legalBoard = 0n;
-    let tmp;
+/*
+011110
+011110
+011110
+1E79E
 
-    // 各方向の合法手を計算 (左, 右, 上, 下, 斜め)
+000000
+111111
+111111
+FFF
+
+111111
+111111
+000000
+3FFC0
+
+000000
+011110
+011110
+79E
+
+011110
+011110
+000000
+1E780
+*/
+function makeLegalBoard(p1, p0, o1, o0) {
+    //p1 p0 は自分の石のビットボード　p0が下位
+    //
+    let blank1 = ~(p1 | o1 |0xFFFFFFFFC0000);
+    let blank0 = ~(p0 | o0 |0xFFFFFFFFC0000);
+    
+    let rowmask1 = o1 & 0x1E79E;
+    let rowmask0 = o0 & 0x1E79E;
+    let colmask1 = o1 & 0xFFF;
+    let colmask0 = o0 & 0x3FFC0;
+    let allsidemask1 = o1 & 0x79E;
+    let allsidemask0 = o0 & 0x1E780;
+    let tmp0,tmp1;
+    let legalBoard0 = 0;
+    let legalBoard1 = 0;
+
     // 左方向
-    tmp = colmask & (p << 1n); // 左
-    legalBoard |= colmask + tmp;
+    tmp1 = rowmask1 & (p1 << 1);
+    legalBoard1 |= rowmask1 + tmp1;
+    tmp0 = rowmask0 & (p0 << 1);
+    legalBoard0 |= rowmask0 + tmp0;
 
     // 右方向
-    tmp = colmask & (p >> 1n);
-    tmp |= colmask & (tmp >> 1n);
-    tmp |= colmask & (tmp >> 1n);
-    tmp |= colmask & (tmp >> 1n);
-    legalBoard |= tmp >> 1n;
+    tmp1 = rowmask1 & (p1 >>> 1);
+    tmp1 |= rowmask1 & (tmp1 >>> 1);
+    tmp1 |= rowmask1 & (tmp1 >>> 1);
+    tmp1 |= rowmask1 & (tmp1 >>> 1);
+    legalBoard1 |= tmp1 >>> 1;
+    tmp0 = rowmask0 & (p0 >>> 1);
+    tmp0 |= rowmask0 & (tmp0 >>> 1);
+    tmp0 |= rowmask0 & (tmp0 >>> 1);
+    tmp0 |= rowmask0 & (tmp0 >>> 1);
+    legalBoard0 |= tmp0 >>> 1;
 
-    // 上方向
-    tmp = rowmask & (p << 6n);
-    tmp |= rowmask & (tmp << 6n);
-    tmp |= rowmask & (tmp << 6n);
-    tmp |= rowmask & (tmp << 6n);
-    legalBoard |= tmp << 6n;
 
-    // 下方向
-    tmp = rowmask & (p >> 6n);
-    tmp |= rowmask & (tmp >> 6n);
-    tmp |= rowmask & (tmp >> 6n);
-    tmp |= rowmask & (tmp >> 6n);
-    legalBoard |= tmp >> 6n;
+    // 上向き
+    tmp0 = p0 << 6 & colmask0;
+    tmp0 |= tmp0 << 6 & colmask0;
+    tmp1=(tmp0 | p0) >>> 12 & colmask1;
+    tmp1 |= ((p1|tmp1)<<6) & colmask1;
+    tmp1 |= tmp1 << 6 & colmask1;
 
-    // 斜め方向 (左上)
-    tmp = allsidemask & (p << 5n);
-    tmp |= allsidemask & (tmp << 5n);
-    tmp |= allsidemask & (tmp << 5n);
-    tmp |= allsidemask & (tmp << 5n);
-    legalBoard |= tmp << 5n;
+    legalBoard1 |= (tmp1 << 6) | (tmp0 >>> 12);
+    legalBoard0 |= tmp0 << 6 & 0x3FFFF;
 
-    // 斜め方向 (右上)
-    tmp = allsidemask & (p << 7n);
-    tmp |= allsidemask & (tmp << 7n);
-    tmp |= allsidemask & (tmp << 7n);
-    tmp |= allsidemask & (tmp << 7n);
-    legalBoard |= tmp << 7n;
+    // 下向き
+    tmp1 = p1 >>> 6 & colmask1;
+    tmp1 |= tmp1 >>> 6 & colmask1;
+    tmp0=(tmp1 | p1) << 12 & colmask0;
+    tmp0 |= ((p0|tmp0) >>> 6) & colmask0;
+    tmp0 |= tmp0 >>> 6 & colmask0;
+    legalBoard0 |= (tmp0 >>> 6) | (tmp1 << 12);
+    legalBoard1 |= tmp1 >> 6 & 0x3FFFF;
 
-    // 斜め方向 (左下)
-    tmp = allsidemask & (p >> 7n);
-    tmp |= allsidemask & (tmp >> 7n);
-    tmp |= allsidemask & (tmp >> 7n);
-    tmp |= allsidemask & (tmp >> 7n);
-    legalBoard |= tmp >> 7n;
+    // 左上
+    tmp0 = p0 << 7 & allsidemask0;
+    tmp0 |= tmp0 << 7 & allsidemask0;
+    tmp1 = ((tmp0 | p0) >>> 11) & allsidemask1;
+    tmp1 |= ((p1 | tmp1) << 7) & allsidemask1;
+    tmp1 |= tmp1 << 7 & allsidemask1;
+    legalBoard1 |= (tmp1 << 7) | (tmp0 >>> 11);
+    legalBoard0 |= tmp0 << 7 & 0x3FFFF;
 
-    // 斜め方向 (右下)
-    tmp = allsidemask & (p >> 5n);
-    tmp |= allsidemask & (tmp >> 5n);
-    tmp |= allsidemask & (tmp >> 5n);
-    tmp |= allsidemask & (tmp >> 5n);
-    legalBoard |= tmp >> 5n;
+    // 右下
+    tmp1 = p1 >>> 7 & allsidemask1;
+    tmp1 |= tmp1 >>> 7 & allsidemask1;
+    tmp0 = ((tmp1 | p1) << 11) & allsidemask0;
+    tmp0 |= ((p0 | tmp0) >>> 7) & allsidemask0;
+    tmp0 |= tmp0 >>> 7 & allsidemask0;
+    legalBoard1 |= tmp1 >>> 7 & 0x3FFFF ;
+    legalBoard0 |= (tmp0 >>> 7) | (tmp1 << 11);
 
-    // 現在のプレイヤーと相手の石を取り除く
-    legalBoard &= ~(p | o);
+    // 右上
+    tmp0 = p0 << 5 & allsidemask0;
+    tmp0 |= tmp0 << 5 & allsidemask0;
+    tmp1 = ((tmp0 | p0) >>> 13) & allsidemask1;
+    tmp1|= ((p1 | tmp1)<<5) & allsidemask1;
+    tmp1 |= tmp1 << 5 & allsidemask1;
+    legalBoard1 |= (tmp1 << 5) | (tmp0 >>> 13);
+    legalBoard0 |= tmp0 << 5 & 0x3FFFF;
 
-    return legalBoard;
+    // 左下
+    tmp1 = p1 >>> 5 & allsidemask1;
+    tmp1 |= tmp1 >>> 5 & allsidemask1;
+    tmp0 = ((tmp1 | p1) << 13) & allsidemask0;
+    tmp0 |= ((p0 | tmp0) >>> 5) & allsidemask0;
+    tmp0 |= tmp0 >>> 5 & allsidemask0;
+    legalBoard1 |= tmp1 >>> 5 & 0x3FFFF;
+    legalBoard0 |= (tmp0 >>> 5 | tmp1 << 13) ;
+
+    legalBoard1 &= blank1;
+    /*console.log("legalboard");
+    getBinarySegment(legalBoard1);*/
+    legalBoard0 &= blank0;
+
+    return [legalBoard1,legalBoard0];
 }
 
-function putStone(b, position) {
-    // プレイヤーの石をボードに追加
-    b.playerBoard |= position; 
+// 上側に置いたときの反転する石の位置を返す
+//sq_bit→bitposition
+function flip1(b,p1, p0, o1, o0,sq_bit) {
+    let f1 = 0;
+    let f0 = 0;
 
-    // 各方向のマスク
-    let colmask = b.opponentBoard & 0x000000079E79E79En;
-    let rowmask = b.opponentBoard & 0x000000003FFFFFC0n;
-    let allsidemask = b.opponentBoard & 0x000000001E79E780n;
+    let mo1 = o1 & 0x1E79E;
+    let mo0 = o0 & 0x1E79E;
 
-    let board = b.playerBoard;
-    let rev = 0n;  // 反転させる石を保存する変数
-    let tmp;
+    // 左
+    let d1 = 0x0000003e * sq_bit;
+    let t1 = (mo1 | ~d1) + 1 & d1 & p1;
+    f1 = t1 - ((t1 | -t1) >>> 31) & d1;
 
-    // 左方向
-    tmp = colmask & (position << 1n);
-    tmp |= colmask & (tmp << 1n);
-    tmp |= colmask & (tmp << 1n);
-    tmp |= colmask & (tmp << 1n);
-    if ((tmp << 1n) & board) rev |= tmp;
-    //rev |= (tmp & -(b.playerBoard & (tmp << 1n) !== 0n));
+    // 左上
+    d1 = 0x4080 * sq_bit;
+    t1 = (mo1 | ~d1) + 1 & d1 & p1;
+    f1 |= t1 - ((t1 | -t1) >>> 31) & d1;
+    /*console.log("test");
+    getBinarySegment( t1 - ((t1 | -t1) >>> 31) & d1);*/
 
-    // 右方向
-    tmp = colmask & (position >> 1n);
-    tmp |= colmask & (tmp >> 1n);
-    tmp |= colmask & (tmp >> 1n);
-    tmp |= colmask & (tmp >> 1n);
-    if ((tmp >> 1n) & board) rev |= tmp;
+    // 上 マスクは付けてはだめ。
+    d1 = 0x1040 * sq_bit;
+    t1 = (o1 | ~d1) + 1 & d1 & p1;
+    f1 |= t1 - ((t1 | -t1) >>> 31) & d1;
 
-    // 上方向
-    tmp = rowmask & (position << 6n);
-    tmp |= rowmask & (tmp << 6n);
-    tmp |= rowmask & (tmp << 6n);
-    tmp |= rowmask & (tmp << 6n);
-    if ((tmp << 6n) & board) rev |= tmp;
+    // 右上
+    d1 = 0x8420 * sq_bit;
+    t1 = (mo1 | ~d1) + 1 & d1 & p1;
+    f1 |= t1 - ((t1 | -t1) >>> 31) & d1;
 
-    // 下方向
-    tmp = rowmask & (position >> 6n);
-    tmp |= rowmask & (tmp >> 6n);
-    tmp |= rowmask & (tmp >> 6n);
-    tmp |= rowmask & (tmp >> 6n);
-    if ((tmp >> 6n) & board) rev |= tmp;
+    // 右
+    t1 = sq_bit >>> 1 & mo1;
+    t1 |= t1 >>> 1 & mo1;
+    t1 |= t1 >>> 1 & mo1;
+    t1 |= t1 >>> 1 & mo1;
+    f1 |= t1 & -(t1 >>> 1 & p1);
 
-    // 左上方向
-    tmp = allsidemask & (position << 5n);
-    tmp |= allsidemask & (tmp << 5n);
-    tmp |= allsidemask & (tmp << 5n);
-    tmp |= allsidemask & (tmp << 5n);
-    if ((tmp << 5n) & board) rev |= tmp;
+    // 右下
+    t1 = sq_bit >>> 7 & mo1;
+    t1 |= t1 >>> 7 & mo1;
+    let t0 = (t1 | sq_bit) << 11 & mo0;
+    t0 |= t0 >>> 7 & mo0;
+    let t = t1 >>> 7 & p1 | (t0 >>> 7 | t1 << 11) & p0;
+    t = (t | -t) >> 31;
+    f1 |= t1 & t;
+    f0 |= t0 & t;
 
-    // 右上方向
-    tmp = allsidemask & (position << 7n);
-    tmp |= allsidemask & (tmp << 7n);
-    tmp |= allsidemask & (tmp << 7n);
-    tmp |= allsidemask & (tmp << 7n);
-    if ((tmp << 7n) & board) rev |= tmp;
+    
+    // 下 敵石にマスクはつけない
+    t1 = sq_bit >>> 6 & o1;
+    t1 |= t1 >>> 6 & o1;
+    t0 = (t1 | sq_bit) << 12 & o0;
+    t0 |= t0 >>> 6 & o0;
+    t = t1 >>> 6 & p1 | (t0 >>> 6 | t1 << 12) & p0;
+    t = (t | -t) >> 31;
+    f1 |= t1 & t;
+    f0 |= t0 & t;
 
-    // 左下方向
-    tmp = allsidemask & (position >> 7n);
-    tmp |= allsidemask & (tmp >> 7n);
-    tmp |= allsidemask & (tmp >> 7n);
-    tmp |= allsidemask & (tmp >> 7n);
-    if ((tmp >> 7n) & board) rev |= tmp;
+    // 左下
+    t1 = sq_bit >>> 5 & mo1;
+    t1 |= t1 >>> 5 & mo1;
+    t0 = (t1 | sq_bit) << 13 & mo0;
+    t0 |= t0 >>> 5 & mo0;
+    t = t1 >>> 5 & p1 | (t0 >>> 5 | t1 << 13) & p0;
+    t = (t | -t) >> 31;
 
-    // 右下方向
-    tmp = allsidemask & (position >> 5n);
-    tmp |= allsidemask & (tmp >> 5n);
-    tmp |= allsidemask & (tmp >> 5n);
-    tmp |= allsidemask & (tmp >> 5n);
-    if ((tmp >> 5n) & board) rev |= tmp;
+    f1 |= t1 & t &0x3FFFF;
+    f0 |= t0 & t &0x3FFFF;
+    /*console.log("bitover");
+    getBinarySegment(sq_bit);
+    console.log("flip");
+    getBinarySegment(f1);
+    getBinarySegment(f0);*/
 
-    // プレイヤーのボードに反転を適用
-    b.playerBoard ^= rev;  
-    b.opponentBoard ^= rev;  
-
-    // ボードを入れ替え
-    tmp = b.playerBoard;
-    b.playerBoard = b.opponentBoard;
-    b.opponentBoard = tmp;
-
-    // ターンを変更
-    b.turn = 1 - b.turn;
-
+    b.opponentBoardup ^= f1;
+    b.opponentBoarddown ^= f0;
+    b.playerBoardup ^= f1;
+    b.playerBoarddown ^= f0;
+    b.playerBoardup |= sq_bit;
+    b=changeOnlyTurn(b);
     return b;
 }
 
 
+// p1, p0: 自石ビット
+// o1, o0: 敵石ビット
+// sq_bit: 石を置くマスのビット(2^n)
+//下側に置いたとき
+function flip0(b,p1, p0, o1, o0, sq_bit) {
+    let f1 = 0;
+    let f0 = 0;
+
+    let mo1 = o1 & 0x1E79E;
+    let mo0 = o0 & 0x1E79E;
+
+    // 左
+    let d0 = mo0 & (sq_bit<<1);
+    let t0;
+    d0 |=mo0 & (d0<<1);
+    d0 |=mo0 & (d0<<1);
+    d0 |=mo0 & (d0<<1);
+    if(Number((d0<<1)&p0)!==0) f0=d0;
+
+    //f0 = t0 - ((t0 | -t0) >>> 31) & d0;
+
+    // 左上
+    t0 = sq_bit << 7 & mo0;
+    t0 |= t0 << 7 & mo0;
+    let t1 = (t0 | sq_bit) >>> 11 & mo1;
+    t1 |= t1 << 7 & mo1;
+    let t = (t1 << 7 | t0 >>> 11) & p1 | t0 << 7 & p0;
+    t = (t | -t) >> 31;
+    f1 |= t1 & t;
+    f0 |= t0 & t;
+
+    // 上 敵石にマスクはつけない
+    t0 = sq_bit << 6 & o0;
+    t0 |= t0 << 6 & o0;
+    t1 = (t0 | sq_bit) >>> 12 & o1;
+    t1 |= t1 << 6 & o1;
+    t = (t1 << 6 | t0 >>> 12) & p1 | t0 << 6 & p0;
+    t = (t | -t) >> 31;
+    f1 |= t1 & t;
+    f0 |= t0 & t;
+
+    // 右上
+    t0 = sq_bit << 5 & mo0;
+    t0 |= t0 << 5 & mo0;
+    t1 = (t0 | sq_bit) >>> 13 & mo1;
+    t1 |= t1 << 5 & mo1;
+    t = (t1 << 5 | t0 >>> 13) & p1 | t0 << 5 & p0;
+    t = (t | -t) >> 31;
+    f1 |= t1 & t;
+    f0 |= t0 & t;
+
+    // 右
+    t0 = sq_bit >>> 1 & mo0;
+    t0 |= t0 >>> 1 & mo0;
+    t0 |= t0 >>> 1 & mo0;
+    t0 |= t0 >>> 1 & mo0;
+    f0 |= t0 & -(t0 >>> 1 & p0);
+
+    // 右下
+    t0 = sq_bit >>> 7 & mo0;
+    t0 |= t0 >>> 7 & mo0;
+    f0 |= t0 & -(t0 >>> 7 & p0);
+
+    // 下 敵石マスク無し
+    t0 = sq_bit >>> 6 & o0;
+    t0 |= t0 >>> 6 & o0;
+    f0 |= t0 & -(t0 >>> 6 & p0);
+
+    // 左下
+    t0 = sq_bit >>> 5 & mo0;
+    t0 |= t0 >>> 5 & mo0;
+    f0 |= t0 & -(t0 >>> 5 & p0);
+
+    /*console.log("bitunder");
+    getBinarySegment(sq_bit);
+    console.log("flip");
+    getBinarySegment(f1);
+    getBinarySegment(f0);*/
+    b.opponentBoardup ^= f1;
+    b.opponentBoarddown ^= f0;
+    b.playerBoardup ^= f1;
+    b.playerBoarddown ^= f0;
+    b.playerBoarddown |= sq_bit;
+    b=changeOnlyTurn(b);
+    return b;
+}
 
 function changeOnlyTurn(b) {
-    let tmp = b.playerBoard;
-    b.playerBoard = b.opponentBoard;
-    b.opponentBoard = tmp;
+    let tmp = b.playerBoardup;
+    b.playerBoardup = b.opponentBoardup;
+    b.opponentBoardup = tmp;
+
+    tmp = b.playerBoarddown;
+    b.playerBoarddown = b.opponentBoarddown;
+    b.opponentBoarddown = tmp;
     b.turn = 1 - b.turn;
     return b;
 }
 
-function resetBoard(b) {
-    b.playerBoard = 0x0000000000108000n;
-    b.opponentBoard = 0x0000000000204000n;
+/*function resetBoard(b) {
+    b.playerBoard = 0x0000000000108000;
+    b.opponentBoard = 0x0000000000204000;
     b.turn = 0;
-}
+}*/
 
 function evaluate(b) {
-    let playerscore = countBit(b.playerBoard);
-    let opponentscore = countBit(b.opponentBoard);
+    let playerscore = countBit(b.playerBoardup)+countBit(b.playerBoarddown);
+    let opponentscore = countBit(b.opponentBoardup)+countBit(b.opponentBoarddown);
     let count = playerscore - opponentscore;
-    
-    if (playerscore === 0) count = -64 * 64 * 2 + opponentscore;
-    if (opponentscore === 0) count = 64 * 64 * 2 - playerscore;
-    if (!mode) {count = -count;console.log("count:",count);}
-    
-    
-    return count;
-}
-
-function lastEvaluate1(b, position, change) {
-    let x = position % 6;
-    let y = Math.floor(position / 6);
-    
-    let score = lastFlipNum[change5line(b.playerBoard, x + y)][Math.min(5 - x, y)] +
-        lastFlipNum[change7line(b.playerBoard, x + 5 - y)][Math.min(x, y)] +
-        lastFlipNum[changeRline(b.playerBoard, y)][x] +
-        lastFlipNum[changeCline(b.playerBoard, x)][y];
-    
-    if (score === 0) {
-        if (change) {
-            let playerscore = countBit(b.playerBoard);
-            let opponentscore = countBit(b.opponentBoard);
-            let count = playerscore - opponentscore;
-            if (playerscore === 0) count = -64 * 64 * 2 + opponentscore;
-            if (opponentscore === 0) count = 64 * 64 * 2 - playerscore;
-            if (!mode) count = -count;
-            return count;
-        } else {
-            b = changeOnlyTurn(b);
-            return -lastEvaluate1(b, position, true);
-        }
-    }
-    
-    let playerscore = countBit(b.playerBoard);
-    let opponentscore = countBit(b.opponentBoard);
-    let count = playerscore - opponentscore + 2 * score + 1;
-    
+    if (playerscore === 0) count = - 36 * 2 + opponentscore;
+    if (opponentscore === 0) count = 36 * 2 - playerscore;
     if (!mode) count = -count;
     
     return count;
 }
 
+
+
 function Nega_alpha(b, depth, passed, alpha, beta) {
-    //console.log("depth: " + depth)
-    if (countBit(~(0xFFFFFFF000000000n | b.playerBoard | b.opponentBoard)) === 1) {
-        //console.log("last")
-        return lastEvaluate1(b, getNumberZeros(~(0xFFFFFFF000000000n | b.playerBoard | b.opponentBoard)), false);
-    }
-
-    //console.log("depth: " + depth);
+    //console.log("depth:",depth);
     //displayBoard(b);
-
+    //displayBoard(b);
     if (depth === 0)
         return evaluate(b);
-
     let max_score = -10000;
-    let legalMoves = makeLegalBoard(b.playerBoard, b.opponentBoard);
+    let legalMoves = makeLegalBoard(b.playerBoardup, b.playerBoarddown, b.opponentBoardup,b.opponentBoarddown);
+    //console.log("0");
+    //getBinarySegment(legalMoves[0]);
+    //getBinarySegment(legalMoves[1]);
+
+    
+    
     //displayBoard(b);
     //displayLegal(legalMoves);   
-    while (legalMoves !== 0n) {
-        let bitposition = legalMoves & (~legalMoves + 1n);
-        //console.log(bitposition.toString(2));  // bitposition を二進数で表示
-        //console.log(legalMoves.toString(2));   // legalMoves を二進数で表示
-        let newB = structuredClone(b);
-        newB = putStone(newB, bitposition);
-        let g = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
-        //console.log("score: " + g);
-        if (g >= beta) return g;
-        alpha = Math.max(alpha, g);
-        max_score = Math.max(max_score, g);
-        legalMoves &= legalMoves - 1n;
+    while (legalMoves[0] !== 0 || legalMoves[1] !== 0) {
+        if(legalMoves[1] !== 0){//下位ビット
+            let bitposition = legalMoves[1] & (~legalMoves[1] + 1);
+            let newB = structuredClone(b);
+            newB = flip0(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
+            let g = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+            //console.log("score:",g);
+            if (g >= beta) return g;
+            alpha = Math.max(alpha, g);
+            max_score = Math.max(max_score, g);
+            legalMoves[1] &= legalMoves[1] - 1;
+        }   
+        else{//上位ビット
+            let bitposition = legalMoves[0] & (~legalMoves[0] + 1);
+            let newB = structuredClone(b);
+            newB = flip1(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
+            let g = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+            //console.log("score:",g);
+            if (g >= beta) return g;
+            alpha = Math.max(alpha, g);
+            max_score = Math.max(max_score, g);
+            legalMoves[0] &= legalMoves[0] - 1;
+        }
     }
-
     // Handle pass
     if (max_score === -10000) {
         //console.log("pass")
@@ -739,37 +751,62 @@ function Nega_alpha(b, depth, passed, alpha, beta) {
 function Search(b) {
     //console.log(1332)
     let res = -1, score, alpha = -10000, beta = 10000;
-    let legalMoves = makeLegalBoard(b.playerBoard, b.opponentBoard); // Use the player's board (white)
+    let legalMoves = makeLegalBoard(b.playerBoardup, b.playerBoarddown, b.opponentBoardup,b.opponentBoarddown); // Use the player's board (white)
     let depth;
-    if(countBit(b.playerBoard | b.opponentBoard) >= 19) depth = lastdepth;
+    if(countBit(b.playerBoardup) +countBit(b.playerBoarddown)+countBit(b.opponentBoardup)+countBit(b.opponentBoarddown) >= 19) depth = lastdepth;
     else depth = normaldepth;
     console.log("depth:",depth)  
     //displayBoard(b);
-    while (legalMoves !== 0n) {
-        //console.log(".....")
-        let coord = SIZE * SIZE - getNumberZeros(legalMoves);
-        //console.log(coord)
-        let bitposition = legalMoves & (~legalMoves + 1n);
-        let newB = structuredClone(b);
-        newB = putStone(newB, bitposition);
-        score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
-        console.log("coord:"+ coord + " score:" + score);
-        if (alpha < score) {
-            alpha = score;
-            res = coord;
+    //getBinarySegment(legalMoves[0]);
+    //getBinarySegment(legalMoves[1]);
+    while (legalMoves[0] !== 0 || legalMoves[1] !== 0) {
+        //console.log(".................................................")
+        if(legalMoves[1] !== 0){//下位ビット
+            let coord = SIZE * SIZE - getNumberZeros(legalMoves[1]);
+            let bitposition = legalMoves[1] & (~legalMoves[1] + 1);
+            let newB = structuredClone(b);
+            newB = flip0(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
+            score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+            console.log("coord:"+ coord + " score:" + score);
+            if (alpha < score) {
+                alpha = score;
+                res = coord;
+            }
+            legalMoves[1] &= legalMoves[1] - 1;
+        }   
+        else{//上位ビット
+            let coord = SIZE * SIZE / 2 - getNumberZeros(legalMoves[0]);
+            let bitposition = legalMoves[0] & (~legalMoves[0] + 1);
+            let newB = structuredClone(b);
+            newB = flip1(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
+            score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+            console.log("coord:"+ coord + " score:" + score);
+            if (alpha < score) {
+                alpha = score;
+                res = coord;
+            }
+            legalMoves[0] &= legalMoves[0] - 1;
         }
-        legalMoves &= legalMoves - 1n;
     }
-
+    console.log("res:", res);
     return res;
 }
+
+function getBinarySegment(num) {
+    let binaryString = num.toString(2).padStart(18, '0');
+    //console.log(binaryString);
+    console.log(binaryString.slice(0,6));
+    console.log(binaryString.slice(6,12));
+    console.log(binaryString.slice(12,18));
+}
+
 
 // `board`に基づいて、空きと石の状態を表示する関数
 function displayLegal(board) {
     for (let i = 0; i < SIZE; ++i) {
         let row = '';
         for (let j = 0; j < SIZE; ++j) {   
-            let bit = 1n << BigInt((SIZE - 1 - i) * SIZE + (SIZE - 1 - j));
+            let bit = 1 << (SIZE - 1 - i) * SIZE + (SIZE - 1 - j);
             row += (board & bit) ? 'o ' : '. '; // 石か空きかを表示
         }
         console.log(row);
@@ -781,14 +818,29 @@ function displayLegal(board) {
 function displayBoard(b) {
     for (let i = 0; i < SIZE; ++i) {
         let row = '';
-        for (let j = 0; j < SIZE; ++j) {
-            let bit = 1n << BigInt((SIZE - 1 - i) * SIZE + (SIZE - 1 - j));
-            if (b.playerBoard & bit) {
-                row += 'B '; // 黒の石
-            } else if (b.opponentBoard & bit) {
-                row += 'W '; // 白の石
-            } else {
-                row += '. '; // 空き
+        row += i + ' ';
+        if(i <=2 ){
+            for (let j = 0; j < SIZE; ++j) {
+                let bit = 1 << (SIZE - 4 - i) * SIZE + (SIZE - 1 - j);
+                if (b.playerBoardup & bit) {
+                    row += 'B '; // 黒の石
+                } else if (b.opponentBoardup & bit) {
+                    row += 'W '; // 白の石
+                } else {
+                    row += '. '; // 空き
+                }
+            }
+        }
+        else{
+            for (let j = 0; j < SIZE; ++j) {
+                let bit = 1 << (SIZE - 1 - i) * SIZE + (SIZE - 1 - j);
+                if (b.playerBoarddown & bit) {
+                    row += 'B '; // 黒の石
+                } else if (b.opponentBoarddown & bit) {
+                    row += 'W '; // 白の石
+                } else {
+                    row += '. '; // 空き
+                }
             }
         }
         console.log(row);
