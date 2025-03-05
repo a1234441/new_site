@@ -182,7 +182,7 @@ function AI(){
     else strong_=-1
 
     let depth;
-    if(countBit(b.playerBoard | b.opponentBoard) >= 19) depth = lastdepth;
+    if(countBit(b.playerBoardup) +countBit(b.playerBoarddown)+countBit(b.opponentBoardup)+countBit(b.opponentBoarddown) >= 19) depth = lastdepth;
     else depth = normaldepth;
     //どこに置くべきか決定する
     let pos=Module._Search(OthelloBoard.opponentBoard,OthelloBoard.opponentBoard,depth,strong_);
