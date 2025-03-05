@@ -85,7 +85,6 @@ function resizeCanvas() {
 
 
 
-
 function ReturnBoard(row , col) {
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
@@ -199,6 +198,9 @@ function AI(){
     return pos;
 }
 
+
+
+
 // マウスクリックで石を置く
 canvas.addEventListener('click',async (event) => {
     const x = event.offsetX;
@@ -211,6 +213,12 @@ canvas.addEventListener('click',async (event) => {
         ReturnBoard(row, col);
         let num1=row*6+col+1;
         console.log(num1);
+        if (Module._multiply_by_two) {
+            var result = Module._multiply_by_two(10);
+            console.log("The result is: " + result);  // 結果をコンソールに出力
+        } else {
+            console.log("関数が準備できていません");
+        }
         board[row][col] = currentPlayer*2;
         
         currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
