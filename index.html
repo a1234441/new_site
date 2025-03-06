@@ -15,6 +15,17 @@
     </nav>
 
     <div class="container">
+        <h1>このサイトの訪問者数: <span id="counter">0</span></h1>
+
+        <script>
+            // ローカルストレージからカウント取得
+            let count = localStorage.getItem("visitCount") || 0;
+            count++;
+            localStorage.setItem("visitCount", count);
+    
+            // カウントを表示
+            document.getElementById("counter").textContent = count;
+        </script>
         <h1>自己紹介</h1>
         <table>
             <tr>
