@@ -15,20 +15,6 @@
     </nav>
 
     <div class="container">
-    <h1>このサイトの訪問者数: <span id="counter">読み込み中...</span></h1>
-
-    <script>
-        // PHPのカウンターからデータ取得
-        fetch("counter.php")
-            .then(response => response.text())
-            .then(count => {
-                document.getElementById("counter").textContent = count;
-            })
-            .catch(error => {
-                console.error("カウンターの読み込みエラー:", error);
-                document.getElementById("counter").textContent = "エラー";
-            });
-    </script>
         <h1>自己紹介</h1>
         <table>
             <tr>
