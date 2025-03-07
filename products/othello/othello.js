@@ -7,7 +7,7 @@ const ctx = canvas.getContext('2d');
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
-let normaldepth=12;
+let normaldepth=13;
 let lastdepth=18;
 let positions="";
 
@@ -299,6 +299,7 @@ function Start(){
     
     if (Number(AIplayer) === Number(currentPlayer)) {
         let put= AI();
+        positions+=String(put);
         console.log(put);
         let putrow = Math.floor(put / 6);
         let putcol = put % 6-1;
