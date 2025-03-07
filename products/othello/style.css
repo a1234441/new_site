@@ -72,7 +72,7 @@ label {
 #startButton {
     width: 200px;  /* 横幅を長くする */
     margin: 20px auto; /* 上下のマージンを調整してボタンを下に配置 */
-    background-color: #f8a757;  /* 黄緑色 */
+    background-color: #56ce3b;  /* 黄緑色 */
     color: rgb(0, 0, 0);  /* ボタンの文字色を白にする */
     border: 2px solid black;  /* 縁を黒にする */
     padding: 10px;  /* 内側の余白 */
@@ -99,4 +99,32 @@ label {
 
 #generateTextButton:hover {
     background-color: #ff5151;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column; /* 縦並び */
+    align-items: center; /* 水平方向の中央 */
+    justify-content: center; /* 垂直方向の中央 */
+    height: 100vh; /* 画面いっぱいにする */
+    padding: 20px; /* 画面端との余白 */
+}
+
+#outputArea {
+    width: 90%; /* 最大90%の幅にする */
+    max-width: 400px; /* 画面が広い場合は最大400px */
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    box-sizing: border-box; /* はみ出し防止 */
+    resize: none; /* ユーザーがサイズ変更できないように */
+}
+
+#copyButton {
+    width: 90%; /* スマホでもボタンが大きすぎないように */
+    max-width: 200px; /* 画面が広い場合は最大200px */
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px; /* テキストエリアとの間隔 */
+    cursor: pointer; /* カーソルをポインターに */
 }
