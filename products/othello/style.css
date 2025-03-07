@@ -84,3 +84,19 @@ label {
 #startButton:hover {
     background-color: #7eed60;  /* ホバー時に色を変える */
 }
+
+#generateTextButton {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#generateTextButton:hover {
+    background-color: #45a049;
+}

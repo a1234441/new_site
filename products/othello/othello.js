@@ -7,9 +7,9 @@ const ctx = canvas.getContext('2d');
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
-let normaldepth=10;
+let normaldepth=12;
 let lastdepth=18;
-
+let positions="";
 
 const gridSize = 6;
 let cellSize;
@@ -135,6 +135,9 @@ function GetPositions() {
             }
         }
     }
+    for (let i = 0; i < gridSize; i++) 
+        for (let j = 0; j < gridSize; j++) 
+            if (board[i][j] === 3 && currentPlayer==AIplayer) board[i][j] = 0;
     return posnum;
 }
 
@@ -157,7 +160,7 @@ function displayBoard(b) {
     console.log('');
 }
 
-function AI(){
+async function AI(){
     //AIとプレイヤーの石をビットに変換する
     OthelloBoard.playerBoard = 0n;
     OthelloBoard.opponentBoard = 0n;
@@ -178,12 +181,10 @@ function AI(){
         //console.log(row1);
     } 
 
-
-
     let strong_;
     if(mode===true)strong_=1;
     else strong_=-1
-
+    await sleep(1000);//読む深さによってここの時間を変更する
     let depth;
     if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 19) depth = lastdepth;
     else depth = normaldepth;
@@ -194,7 +195,12 @@ function AI(){
     return pos;
 }
 
-
+function Recordpos(p){
+    positions+=toString(p);
+    if(currentPlayer==AIplayer) positions+=",";
+    else positions+=".";
+    return;
+}
 
 
 // マウスクリックで石を置く
@@ -209,6 +215,7 @@ canvas.addEventListener('click',async (event) => {
         ReturnBoard(row, col);
         let num1=row*6+col+1;
         console.log(num1);
+        Recordpos(num1);
         /*if (Module._multiply_by_two) {
             var result = Module._multiply_by_two(10);
             console.log("The result is: " + result);  // 結果をコンソールに出力
@@ -237,9 +244,10 @@ canvas.addEventListener('click',async (event) => {
         //AIのターン
         while(true){//置けなくなるまでひたすら置いていく
             drawBoard();
-            await sleep(1000);//読む深さによってここの時間を変更する
+            //await sleep(1000);//読む深さによってここの時間を変更する
             const start = performance.now();
             let put= AI();
+            Recordpos(put);
             const end = performance.now();
             console.log(`実行時間: ${(end - start).toFixed(4)} ms`);
             
@@ -310,6 +318,8 @@ function Start(){
 
 function Reset() {
     //initializeTable();
+    document.getElementById('status').style.color = "black";  // 黒色に戻す
+    document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
     currentPlayer = 1;
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
@@ -349,7 +359,10 @@ window.addEventListener('resize', resizeCanvas);
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+document.getElementById("generateTextButton").addEventListener("click", function() {
+    document.getElementById("outputArea").innerText = "棋譜:"+p; // 画面に表示
+    console.log("p:"+positions);
+});
 
 
 
