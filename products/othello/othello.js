@@ -321,7 +321,7 @@ function Reset() {
     document.getElementById('status').style.color = "black";  // 黒色に戻す
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
     currentPlayer = 1;
-    positions="";
+    
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
             board[i][j] = 0;
@@ -336,11 +336,17 @@ function Reset() {
 
 
 document.getElementById('startButton').addEventListener('click', () => {
+    positions="";
     const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
     console.log("難易度:",difficulty);
     mode = true ? Number(difficulty) === 1 : false;
-    AIplayer = document.querySelector('input[name="turn"]:checked').value;
+    if(mode==true)positions+="1:";
+    else positions+="-1:";
 
+
+    AIplayer = document.querySelector('input[name="turn"]:checked').value;
+    positions=positions+String(AIplayer)+":";
+        
     console.log("turn:",AIplayer);
     resetGame();
 });
