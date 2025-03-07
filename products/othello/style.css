@@ -89,7 +89,7 @@ label {
     display: block;
     margin: 10px auto;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #a53333;
     color: white;
     font-size: 16px;
     border: none;
@@ -98,5 +98,5 @@ label {
 }
 
 #generateTextButton:hover {
-    background-color: #45a049;
+    background-color: #ff5151;
 }
