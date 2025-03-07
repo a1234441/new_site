@@ -160,7 +160,7 @@ function displayBoard(b) {
     console.log('');
 }
 
-async function AI(){
+function AI(){
     //AIとプレイヤーの石をビットに変換する
     OthelloBoard.playerBoard = 0n;
     OthelloBoard.opponentBoard = 0n;
@@ -184,7 +184,6 @@ async function AI(){
     let strong_;
     if(mode===true)strong_=1;
     else strong_=-1
-    await sleep(1000);//読む深さによってここの時間を変更する
     let depth;
     if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 19) depth = lastdepth;
     else depth = normaldepth;
@@ -244,7 +243,7 @@ canvas.addEventListener('click',async (event) => {
         //AIのターン
         while(true){//置けなくなるまでひたすら置いていく
             drawBoard();
-            //await sleep(1000);//読む深さによってここの時間を変更する
+            await sleep(1000);//読む深さによってここの時間を変更する
             const start = performance.now();
             let put= AI();
             Recordpos(put);
@@ -302,8 +301,8 @@ function Start(){
         console.log(put);
         let putrow = Math.floor(put / 6);
         let putcol = put % 6-1;
-        console.log(putrow);
-        console.log(putcol);
+        console.log("putrow:",putrow);
+        console.log("putcol:",putcol);
         ReturnBoard(putrow, putcol);
         board[putrow][putcol] = currentPlayer*2;
         currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
@@ -360,7 +359,7 @@ window.addEventListener('resize', resizeCanvas);
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 document.getElementById("generateTextButton").addEventListener("click", function() {
-    document.getElementById("outputArea").innerText = "棋譜:"+p; // 画面に表示
+    document.getElementById("outputArea").innerText = "棋譜:"+positions; // 画面に表示
     console.log("p:"+positions);
 });
 
