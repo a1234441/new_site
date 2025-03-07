@@ -360,10 +360,32 @@ window.addEventListener('resize', resizeCanvas);
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 document.getElementById("generateTextButton").addEventListener("click", function() {
     document.getElementById("outputArea").innerText = "棋譜:"+positions; // 画面に表示
     console.log("p:"+positions);
 });
+
+
+document.getElementById("copyButton").addEventListener("click", function() {
+    // テキストエリアを取得
+    const outputArea = document.getElementById("outputArea");
+    outputArea.select();
+    outputArea.setSelectionRange(0, 99999); // モバイル対応
+
+    // コピーコマンドを実行
+    try {
+        const successful = document.execCommand('copy'); // 'copy' コマンド実行
+        if (successful) {
+            console.log("コピー成功！"); // デバッグ用
+        } else {
+            console.error("コピー失敗！");
+        }
+    } catch (err) {
+        console.error("コピーできませんでした:", err);
+    }
+});
+
 
 
 

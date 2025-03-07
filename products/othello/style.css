@@ -87,7 +87,7 @@ label {
 
 #generateTextButton {
     display: block;
-    margin: 10px auto;
+    margin: 20px auto; /* 上下の余白を調整 */
     padding: 10px 20px;
     background-color: #a53333;
     color: white;
@@ -105,9 +105,10 @@ label {
     display: flex;
     flex-direction: column; /* 縦並び */
     align-items: center; /* 水平方向の中央 */
-    justify-content: center; /* 垂直方向の中央 */
-    height: 100vh; /* 画面いっぱいにする */
+    justify-content: flex-start; /* 上部に配置（垂直方向） */
+    width: 100%; /* 横幅100%にする */
     padding: 20px; /* 画面端との余白 */
+    box-sizing: border-box; /* パディングも幅に含める */
 }
 
 #outputArea {
@@ -118,6 +119,7 @@ label {
     text-align: center;
     box-sizing: border-box; /* はみ出し防止 */
     resize: none; /* ユーザーがサイズ変更できないように */
+    margin-bottom: 15px; /* テキストエリアとボタンの間隔を調整 */
 }
 
 #copyButton {
@@ -127,4 +129,12 @@ label {
     font-size: 16px;
     margin-top: 10px; /* テキストエリアとの間隔 */
     cursor: pointer; /* カーソルをポインターに */
+    background-color: #e7ff4e;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+}
+
+#copyButton:hover {
+    background-color: #45a049; /* コピーボタンのホバー時の色 */
 }
