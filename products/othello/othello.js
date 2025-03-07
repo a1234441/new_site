@@ -195,7 +195,7 @@ function AI(){
 }
 
 function Recordpos(p){
-    positions+=toString(p);
+    positions+=String(p);
     if(currentPlayer==AIplayer) positions+=",";
     else positions+=".";
     return;
@@ -296,6 +296,7 @@ function Result(){
 }
 
 function Start(){
+    
     if (Number(AIplayer) === Number(currentPlayer)) {
         let put= AI();
         console.log(put);
@@ -320,6 +321,7 @@ function Reset() {
     document.getElementById('status').style.color = "black";  // 黒色に戻す
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
     currentPlayer = 1;
+    positions="";
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
             board[i][j] = 0;
