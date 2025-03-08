@@ -299,7 +299,7 @@ function Start(){
     
     if (Number(AIplayer) === Number(currentPlayer)) {
         let put= AI();
-        positions+=String(put);
+        positions+=String(put)+",";
         console.log(put);
         let putrow = Math.floor(put / 6);
         let putcol = put % 6-1;
