@@ -1,10 +1,3 @@
-var Module = (() => {
-  var _scriptName = import.meta.url;
-  
-  return (
-async function(moduleArg = {}) {
-  var moduleRtn;
-
 // include: shell.js
 // The Module object: Our interface to the outside world. We import
 // and export values on it. There are various ways Module can be used:
@@ -19,14 +12,7 @@ async function(moduleArg = {}) {
 // after the generated code, you will need to define   var Module = {};
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
-var Module = moduleArg;
-
-// Set up the promise that indicates the Module is initialized
-var readyPromiseResolve, readyPromiseReject;
-var readyPromise = new Promise((resolve, reject) => {
-  readyPromiseResolve = resolve;
-  readyPromiseReject = reject;
-});
+var Module = typeof Module != 'undefined' ? Module : {};
 
 // Determine the runtime environment we are in. You can customize this by
 // setting the ENVIRONMENT setting at compile time (see settings.js).
@@ -40,11 +26,6 @@ var ENVIRONMENT_IS_NODE = typeof process == 'object' && typeof process.versions 
 var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 
 if (ENVIRONMENT_IS_NODE) {
-  // When building an ES module `require` is not normally available.
-  // We need to use `createRequire()` to construct the require()` function.
-  const { createRequire } = await import('module');
-  /** @suppress{duplicate} */
-  var require = createRequire(import.meta.url);
 
 }
 
@@ -93,12 +74,7 @@ if (ENVIRONMENT_IS_NODE) {
   var fs = require('fs');
   var nodePath = require('path');
 
-  // EXPORT_ES6 + ENVIRONMENT_IS_NODE always requires use of import.meta.url,
-  // since there's no way getting the current absolute path of the module when
-  // support for that is not available.
-  if (!import.meta.url.startsWith('data:')) {
-    scriptDirectory = nodePath.dirname(require('url').fileURLToPath(import.meta.url)) + '/';
-  }
+  scriptDirectory = __dirname + '/';
 
 // include: node_shell_read.js
 readBinary = (filename) => {
@@ -123,7 +99,9 @@ readAsync = async (filename, binary = true) => {
 
   arguments_ = process.argv.slice(2);
 
-  // MODULARIZE will export the module in the proper place outside, we don't need to export here
+  if (typeof module != 'undefined') {
+    module['exports'] = Module;
+  }
 
   quit_ = (status, toThrow) => {
     process.exitCode = status;
@@ -145,11 +123,6 @@ if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
     scriptDirectory = self.location.href;
   } else if (typeof document != 'undefined' && document.currentScript) { // web
     scriptDirectory = document.currentScript.src;
-  }
-  // When MODULARIZE, this JS may be executed later, after document.currentScript
-  // is gone, so we saved it, and we use it here instead of any other info.
-  if (_scriptName) {
-    scriptDirectory = _scriptName;
   }
   // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
   // otherwise, slice off the final part of the url to find the script directory.
@@ -689,7 +662,6 @@ function abort(what) {
   /** @suppress {checkTypes} */
   var e = new WebAssembly.RuntimeError(what);
 
-  readyPromiseReject(e);
   // Throw the error whether or not MODULARIZE is set because abort is used
   // in code paths apart from instantiation where an exception is expected
   // to be thrown when abort is called.
@@ -728,11 +700,7 @@ function createExportWrapper(name, nargs) {
 
 var wasmBinaryFile;
 function findWasmBinary() {
-  if (Module['locateFile']) {
     return locateFile('main.wasm');
-  }
-  // Use bundler-friendly `new URL(..., import.meta.url)` pattern; works in browsers too.
-  return new URL('main.wasm', import.meta.url).href;
 }
 
 function getBinarySync(file) {
@@ -874,15 +842,9 @@ async function createWasm() {
 
   wasmBinaryFile ??= findWasmBinary();
 
-  try {
     var result = await instantiateAsync(wasmBinary, wasmBinaryFile, info);
     var exports = receiveInstantiationResult(result);
     return exports;
-  } catch (e) {
-    // If instantiation fails, reject the module ready promise.
-    readyPromiseReject(e);
-    return Promise.reject(e);
-  }
 }
 
 // === Body ===
@@ -1116,18 +1078,19 @@ var wasmImports = {
   /** @export */
   fd_write: _fd_write
 };
-var wasmExports = await createWasm();
+var wasmExports;
+createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
 var _Search = Module['_Search'] = createExportWrapper('Search', 4);
 var _fflush = createExportWrapper('fflush', 1);
 var _strerror = createExportWrapper('strerror', 1);
-var _emscripten_stack_init = wasmExports['emscripten_stack_init']
-var _emscripten_stack_get_free = wasmExports['emscripten_stack_get_free']
-var _emscripten_stack_get_base = wasmExports['emscripten_stack_get_base']
-var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
-var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
-var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
-var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
+var _emscripten_stack_init = () => (_emscripten_stack_init = wasmExports['emscripten_stack_init'])();
+var _emscripten_stack_get_free = () => (_emscripten_stack_get_free = wasmExports['emscripten_stack_get_free'])();
+var _emscripten_stack_get_base = () => (_emscripten_stack_get_base = wasmExports['emscripten_stack_get_base'])();
+var _emscripten_stack_get_end = () => (_emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'])();
+var __emscripten_stack_restore = (a0) => (__emscripten_stack_restore = wasmExports['_emscripten_stack_restore'])(a0);
+var __emscripten_stack_alloc = (a0) => (__emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc'])(a0);
+var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'])();
 
 
 // include: postamble.js
@@ -1464,7 +1427,6 @@ function run() {
 
     initRuntime();
 
-    readyPromiseResolve(Module);
     Module['onRuntimeInitialized']?.();
     consumedModuleProp('onRuntimeInitialized');
 
@@ -1527,45 +1489,3 @@ run();
 
 // end include: postamble.js
 
-// include: postamble_modularize.js
-// In MODULARIZE mode we wrap the generated code in a factory function
-// and return either the Module itself, or a promise of the module.
-//
-// We assign to the `moduleRtn` global here and configure closure to see
-// this as and extern so it won't get minified.
-
-moduleRtn = readyPromise;
-
-// Assertion for attempting to access module properties on the incoming
-// moduleArg.  In the past we used this object as the prototype of the module
-// and assigned properties to it, but now we return a distinct object.  This
-// keeps the instance private until it is ready (i.e the promise has been
-// resolved).
-for (const prop of Object.keys(Module)) {
-  if (!(prop in moduleArg)) {
-    Object.defineProperty(moduleArg, prop, {
-      configurable: true,
-      get() {
-        abort(`Access to module property ('${prop}') is no longer possible via the module constructor argument; Instead, use the result of the module constructor.`)
-      }
-    });
-  }
-}
-// end include: postamble_modularize.js
-
-
-
-  return moduleRtn;
-}
-);
-})();
-(() => {
-  // Create a small, never-async wrapper around Module which
-  // checks for callers incorrectly using it with `new`.
-  var real_Module = Module;
-  Module = function(arg) {
-    if (new.target) throw new Error("Module() should not be called with `new Module()`");
-    return real_Module(arg);
-  }
-})();
-export default Module;
