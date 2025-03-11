@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>MT5用オセロ</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+
+        img {
+          max-width: 80%;  /* 画面幅に合わせて画像を縮小 */
+          height: auto;     /* 高さを自動調整 */
+        }
+        .red {
+        color: rgb(203, 0, 0);
+        }
+
+        .button-container {
+        display: flex;
+        justify-content: center; /* 横方向に中央寄せ */
+        margin-top: 50px; /* 上に少し余白をつける */
+        }
+
+        .download-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #ca9938; /* ボタンの背景色 */
+        color: rgb(0, 0, 0); /* 文字色 */
+        border-radius: 5px; /* 角を丸く */
+        border: none;
+        transition: background-color 0.3s ease;
+        width: 250px; /* 横幅を広げる */
+        }
+
+        /* ホバー時の色変更 */
+        .download-button:hover {
+        background-color: #45a049; /* ホバー時の背景色 */
+        }
+
+        /* ボタンがクリックされると少し下に移動する効果 */
+        .download-button:active {
+        transform: translateY(2px);
+        }
+      </style>
+</head>
+<body>
+    <nav>
+        <a href="../../index.html">ホーム</a>
+        <a href="../../indexs/product_host.html">Product</a>
+        <a href="../../indexs/dairy_host.html">Article</a>
+        <a href="../../indexs/contact.html">Contact</a>
+    </nav>
+
+    <div class="container">
+        <h1>MT5用オセロ</h1>
+        <p>あるときネットサーフィンをしていたら、MT5(FXの取引アプリだと思ってください)で<a href="https://www.mql5.com/ja/market/product/51606?source=External#">テトリス</a>がプレイできるソフトを発見。
+            だったらオセロも作れるんじゃないかと考えて作成しました。</p>
+        <p>基本的なUIは、Mql5に標準搭載されている<a href="https://www.mql5.com/en/docs/standardlibrary/canvasgraphics/ccanvas">CCanvas</a>というライブラリを使用しています。
+            そこに正方形と円を組み合わせて描くことでオセロを実装しています。</p>
+        <img src="../../resources/images/mt5othello.png" alt="サンプル画像">
+        <br>
+        <h3>各種説明</h3>
+        <img src="../../resources/images/mt5othello_2.png" alt="サンプル画像">
+        <ol>
+            <li>delateボタン:このゲームを止めたいときに押します</li>
+            <li>Playボタン:ゲームをリスタートするときに押します。途中まで遊んでいた場合、自動的に盤面がリセットされます</li>
+            <li>Modeボタン:このボタンを押すことでプレイモードを変更できます。
+                "mode"はBotの強さ(strong,poor)、"turn"はBotのターンがどちらであるかを設定します(first,second)。<br>
+                <span class="red">※選択した後、Playボタンでリセットする必要があります。モード画面が変更されているだけで、playボタンを押していない場合はモードは変更されていません</span>
+            </li>
+            <li>Mode画面:どのモードが選択されているかを表示します。<br>
+                </li>
+            <li>Score画面:現在の各々の石の数が出力されます</li>
+        </ol>
+        <p>このプログラムは、チャートに適用するとデフォルト設定で自動的にスタートします。別のモードで遊びたいときはModeボタンとPlayボタンを適宜使用してください。</p>
+        <p>また、追加してほしい機能やバグがあった場合、報告していただけると助かります。</p>
+        <h1><span class="red">免責事項</span></h1>
+        <p>・PCで問題なく動作することは確認済みですが、万が一損害が発生した場合、当サイトは一切の責任を負いません。</p>
+        <p>・二次配布は基本的に黙認します。自由にしていただいて結構ですが、自己責任でお願いします。</p>
+        <br>
+        <div class="button-container">
+            <a href="../../resources/programs/othello.ex5" class="download-button" download>Download</a>
+            
+        </div>
+    </div>
+
+    <br><br><br>
+    <a href="../../index.html">ホーム</a>
+    <script src="main.js"></script>
+    <script src="othello.js"></script>
+</body>
+</html>
