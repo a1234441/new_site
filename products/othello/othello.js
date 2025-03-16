@@ -465,7 +465,7 @@ async function Search1() {
 
 
 async function Search() {
-    let fileName = txtname; // ファイル名
+    let fileName = txtname+".txt"; // ファイル名
     console.log("state:", state);
     try {
         // fetchを使用してサーバーからファイルを非同期に取得
