@@ -378,6 +378,7 @@ function Reset() {
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
     currentPlayer = 1;
     first=true;
+    state="";
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
             board[i][j] = 0;
