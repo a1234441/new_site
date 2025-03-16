@@ -464,7 +464,7 @@ async function Search1() {
 
 
 async function Search() {
-    let fileName = "whitestrong.txt"; // ファイル名
+    let fileName = txtname; // ファイル名
     console.log("state:", state);
     try {
         // fetchを使用してサーバーからファイルを非同期に取得
