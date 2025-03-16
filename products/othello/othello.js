@@ -4,6 +4,7 @@ const ctx = canvas.getContext('2d');
 
 // グリッドサイズとボード設定
 
+
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
@@ -172,7 +173,7 @@ function displayBoard(b) {
     console.log('');
 }
 
-async function AI(){
+function AI(){
     //AIとプレイヤーの石をビットに変換する
     OthelloBoard.playerBoard = 0n;
     OthelloBoard.opponentBoard = 0n;
@@ -201,7 +202,7 @@ async function AI(){
     //else {depth = normaldepth};
     else if(txtname==="whitestrong" && act>0){
         console.log("定石だピヨ");
-        let num=await Search();
+        let num=Search1();
         return num;
     }
     else{
@@ -349,8 +350,9 @@ function Result(){
 function Start(){
     
     if (Number(AIplayer) === Number(currentPlayer)) {
-        let put= AI();
-        put=PutToPos(put);
+        //let put= AI();
+        let i=9;
+        let put=PutToPos(i);
         positions+=String(put)+",";
         console.log(put);
         let putrow = Math.floor(put / 6);
@@ -455,6 +457,10 @@ document.getElementById("copyButton").addEventListener("click", function() {
     }
 });
 
+async function Search1() {
+    let num=await Search();
+    return num;
+}
 
 
 async function Search() {
