@@ -466,8 +466,6 @@ async function Search1() {
 
 async function Search() {
     let fileName = txtname+".txt"; // ファイル名
-    console.log("state:", state);
-    console.log("file:", filename);
     try {
         // fetchを使用してサーバーからファイルを非同期に取得
         const response = await fetch(fileName);
@@ -573,4 +571,3 @@ function countBit(board) {
     board = board + (board >> 32n);
     return Number(board & 0x0000007fn);
 }
-
