@@ -231,7 +231,7 @@ function PutToPos(pos){
         if(pos===14) rotation=1;
         if(pos===28) rotation=2;
         if(pos===23) rotation=3;
-        if(txtname==="whitestrong") rotation=0;
+        if(txtname!=="whitestrong") rotation=0;
         first=false;
     }
     let putrow = Math.floor((pos-1) / 6);
@@ -292,13 +292,14 @@ canvas.addEventListener('click',async (event) => {
             await sleep(1000);//読む深さによってここの時間を変更する
             const start = performance.now();
             let put= await AI();
+            console.log("putpos:",put);
             act--;
-            Recordpos(put);
+            state+=put+",";    
 
             put=String(PutToPos(put));
             if (put.length === 1) put = put.padStart(2, '0');
-            state+=put;
-            state+=",";
+
+            Recordpos(put);
 
             const end = performance.now();
             console.log(`実行時間: ${(end - start).toFixed(4)} ms`);
@@ -467,7 +468,9 @@ async function Search1() {
 
 async function Search() {
     let fileName = txtname+".txt"; // ファイル名
+    console.log("file:",fileName);
     try {
+
         // fetchを使用してサーバーからファイルを非同期に取得
         const response = await fetch(fileName);
         if (!response.ok) {
@@ -477,12 +480,13 @@ async function Search() {
         const content = await response.text();
         // ファイル内容を行ごとに分割
         const lines = content.split('\n');
-
+        console.log(state);
         // 各行を通常のforループで処理（早期リターン可能）
         for (let index = 0; index < lines.length; index++) {
             const line = lines[index];
             if (line.includes(state)) { // "state" が含まれるか確認
                 const stateIndex = line.indexOf(state);
+                
                 // state の直後の2文字を抽出するため、state.length だけ先頭をずらす
                 if (line.length >= stateIndex + state.length + 2) {
                     let extractedStr = line.slice(stateIndex + state.length, stateIndex + state.length + 2);
