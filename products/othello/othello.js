@@ -3,7 +3,7 @@ const canvas = document.getElementById('othelloBoard');
 const ctx = canvas.getContext('2d');
 
 // グリッドサイズとボード設定
-
+//203   234行目
 
 const table = new Array(64).fill(0);
 const SIZE = 6;
@@ -231,6 +231,7 @@ function PutToPos(pos){
         if(pos===14) rotation=1;
         if(pos===28) rotation=2;
         if(pos===23) rotation=3;
+        if(txtname==="whitestrong") rotation=0;
         first=false;
     }
     let putrow = Math.floor((pos-1) / 6);
