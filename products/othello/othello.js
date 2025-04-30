@@ -1,6 +1,8 @@
 "use strict";
 const canvas = document.getElementById('othelloBoard');
 const ctx = canvas.getContext('2d');
+//python -m http.server 8000
+//http://localhost:8000
 
 // グリッドサイズとボード設定
 //203   234行目
