@@ -28,6 +28,8 @@ let rotationboard=[
     [[36,30,24,18,12,6],[35,29,23,17,11,5],[34,28,22,16,10,4],[33,27,21,15,9,3],[32,26,20,14,8,2],[31,25,19,13,7,1]],
 ]
 
+
+
 const board = Array(gridSize).fill().map(() => Array(gridSize).fill(0));  // 0 = 空, 1 = 黒, -1 = 白
 let currentPlayer = 1;  // 1: 黒, -1: 白
 let vec_table = [
@@ -236,6 +238,7 @@ function PutToPos(pos){
     }
     let putrow = Math.floor((pos-1) / 6);
     let putcol = (pos-1) % 6;
+    
     return    rotationboard[rotation][putrow][putcol];
 }
 
@@ -295,11 +298,11 @@ canvas.addEventListener('click',async (event) => {
             console.log("putpos:",put);
             act--;
                 
-
-            put=String(PutToPos(put));
             if (put.length === 1) put = put.padStart(2, '0');
             state+=put+",";
             Recordpos(put);
+            put=String(PutToPos(put));
+
 
             const end = performance.now();
             console.log(`実行時間: ${(end - start).toFixed(4)} ms`);
