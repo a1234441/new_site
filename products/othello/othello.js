@@ -294,11 +294,11 @@ canvas.addEventListener('click',async (event) => {
             let put= await AI();
             console.log("putpos:",put);
             act--;
-            state+=put+",";    
+                
 
             put=String(PutToPos(put));
             if (put.length === 1) put = put.padStart(2, '0');
-
+            state+=put+",";
             Recordpos(put);
 
             const end = performance.now();
