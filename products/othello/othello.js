@@ -17,7 +17,7 @@ let positions="";//棋譜用
 let state="";//調べる用
 
 let txtname="";
-
+let stone="normal"; //normal or premium
 
 const gridSize = 6;
 let cellSize;
@@ -55,11 +55,22 @@ let OthelloBoard = {
 // 石の描画
 function drawBoard() {
     // 背景を黒に塗りつぶす
-    ctx.fillStyle = '#006400';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if(stone==="normal"){
+        ctx.fillStyle = '#006400';
+        ctx.fillRect(0, 0, cellSize*gridSize, cellSize*gridSize);
+    }
+    if(stone==="premium"){
+        // 緑のグラデーションを作成（明るい→暗い）
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#228B22');  // 明るめの緑
+        grad.addColorStop(1, '#006400');  // 濃い緑
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, cellSize * gridSize, cellSize * gridSize);
+    }
     // グリッド線を描画
     ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 5*gridSize/50.;
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
@@ -79,25 +90,85 @@ function drawBoard() {
                 ctx.fillRect(col * cellSize+1, row * cellSize+1, cellSize-2, cellSize-2);
             }
             if (board[row][col] !== 0) {
-                ctx.beginPath();
-                ctx.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, Math.PI * 2);
-                if(board[row][col] === 1 || board[row][col] === 2) ctx.fillStyle='black';
-                else ctx.fillStyle='white';
-                ctx.fill();
+                if(stone==="normal"){
+                    ctx.beginPath();
+                    ctx.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, Math.PI * 2);
+                    if(board[row][col] === 1 || board[row][col] === 2) ctx.fillStyle='black';
+                    else ctx.fillStyle='white';
+                    ctx.fill();
+                }
+                if(stone==="premium"){
+                    ctx.beginPath();
+                    const cx = col * cellSize + cellSize / 2;
+                    const cy = row * cellSize + cellSize / 2;
+                    const radius = cellSize / 3;
+                    
+                    // グラデーション作成（光の当たる位置を少しズラすとリアル感アップ）
+                    const grad = ctx.createRadialGradient(cx - radius * 0.3, cy - radius * 0.3, radius * 0.2, cx, cy, radius);
+                    if (board[row][col] === 1 || board[row][col] === 2) {
+                        grad.addColorStop(0, '#666');  // 明るいグレー
+                        grad.addColorStop(0.5, '#333'); // ダークグレー
+                        grad.addColorStop(1, '#000');   // 黒
+                    } else {
+                        // 白石のグラデーション（白 → ライトグレー → 黄金色）
+                        grad.addColorStop(0, '#fff');    // 明るい白
+                        grad.addColorStop(0.7, '#ccc');  // ライトグレー
+                        grad.addColorStop(1, '#bdbdbd');  // ライトグレー
+                    }
+                    
+                    ctx.fillStyle = grad;
+                    
+                    // 軽く影をつけて立体感UP
+                    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                    
+                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 黒石、白石の左上からの影を強化
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                    ctx.shadowBlur = 13;
+                    ctx.shadowOffsetX = 8;  // 左上に影を移動
+                    ctx.shadowOffsetY = 8;
+                    
+                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 影をリセット
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                    
+                }
             }
         }
     }
 }
 
 // ウィンドウ幅に基づいてキャンバスをリサイズ
-function resizeCanvas() {
+/*function resizeCanvas() {
     const screenSize = Math.min(window.innerWidth * 0.8, 600); // 最大600pxまで
     canvas.width = screenSize;
     canvas.height = screenSize;
     cellSize = canvas.width / gridSize;
     drawBoard();
-}
+}*/
+function resizeCanvas() {
+    const screenSize = Math.min(window.innerWidth * 0.8, 600); // CSS上の表示サイズ
+    const dpr = window.devicePixelRatio || 1; // デバイスピクセル比（Retina対応）
 
+    canvas.style.width = screenSize + "px";       // 表示サイズ（CSS）
+    canvas.style.height = screenSize + "px";      // 表示サイズ（CSS）
+    canvas.width = screenSize * dpr;              // 実際のピクセルサイズ
+    canvas.height = screenSize * dpr;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // キャンバスのスケールを調整（すべての描画にdprがかかる）
+
+    cellSize = screenSize / gridSize; // 座標計算はCSSベースでOK
+
+    drawBoard();
+}
 
 
 function ReturnBoard(row , col) {
@@ -206,7 +277,7 @@ async function AI(){
     if(mode===true)strong_=1;
     else strong_=-1
     let depth;
-    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 19) {console.log("最終探索だピヨ");depth = lastdepth;}
+    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 18) {console.log("最終探索だピヨ");depth = lastdepth;}
     //else {depth = normaldepth};
     else if(txtname==="whitestrong"){
         console.log("定石だピヨ");
@@ -307,7 +378,7 @@ function PassCheck(char){
     currentPlayer = currentPlayer === 1 ? -1 : 1;  //自分が石をおける→continue  おけない場合はResult()で終了
     let num=GetPositions();
     if(num===0){Result();return true;}//pass
-    else false;//no pass
+    else return false;;//no pass
 }
 
 
@@ -353,7 +424,6 @@ function Reset() {
     currentPlayer = 1;
     rotation=-1;
     state="";
-    positions="";
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
             board[i][j] = 0;
@@ -381,7 +451,7 @@ document.getElementById('startButton').addEventListener('click', () => {
     else txtname="black";
     if(mode==true) txtname+="strong";
     else txtname+="poor";
-
+    stone = document.querySelector('input[name="stoneStyle"]:checked').value;
     //console.log("txt:",txtname);
     //console.log("turn:",AIplayer);
     resetGame();
