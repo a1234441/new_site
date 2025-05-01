@@ -10,18 +10,20 @@ const ctx = canvas.getContext('2d');
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
-let normaldepth=12;
+let normaldepth=11;
 let lastdepth=18;
-let positions="";
+
+let positions="";//棋譜用
+let state="";//調べる用
+
 let txtname="";
-let first=true;
-let act=0;
+
 
 const gridSize = 6;
 let cellSize;
-let AIplayer=-1; // 1...黒　　-1...白
+let AIplayer=-1; // 1...黒 -1...白
 
-let state="";
+
 let rotation=0;
 let rotationboard=[
     [[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18],[19,20,21,22,23,24],[25,26,27,28,29,30],[31,32,33,34,35,36]],
@@ -75,7 +77,6 @@ function drawBoard() {
             if (board[row][col] === 2 || board[row][col] === -2) {
                 ctx.fillStyle = 'lightblue';
                 ctx.fillRect(col * cellSize+1, row * cellSize+1, cellSize-2, cellSize-2);
-                //board[row][col] = board[row][col] / 2;// その後、値を1/2倍して配列に代入
             }
             if (board[row][col] !== 0) {
                 ctx.beginPath();
@@ -118,6 +119,9 @@ function ReturnBoard(row , col) {
                 for (let [flipX, flipY] of flipList)  board[flipY][flipX] = player;
         }
     }
+    board[row ][col] = currentPlayer*2;
+    currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
+    document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
 }
 
 function GetPositions() {
@@ -177,7 +181,7 @@ function displayBoard(b) {
     console.log('');
 }
 
-function AI(){
+async function AI(){
     //AIとプレイヤーの石をビットに変換する
     OthelloBoard.playerBoard = 0n;
     OthelloBoard.opponentBoard = 0n;
@@ -202,12 +206,12 @@ function AI(){
     if(mode===true)strong_=1;
     else strong_=-1
     let depth;
-    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 19 || act<=0) {console.log("最終探索だピヨ");depth = lastdepth;}
+    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 19) {console.log("最終探索だピヨ");depth = lastdepth;}
     //else {depth = normaldepth};
-    else if(txtname==="whitestrong" && act>0){
+    else if(txtname==="whitestrong"){
         console.log("定石だピヨ");
-        let num=Search1();
-        return num;
+        let num=await Search();
+        return PutToPos(num);
     }
     else{
         depth = normaldepth;
@@ -215,7 +219,7 @@ function AI(){
     }
 
     //どこに置くべきか決定する
-    console.log("depth:",depth);
+    //console.log("depth:",depth);
     let pos=Module._Search(OthelloBoard.playerBoard,OthelloBoard.opponentBoard,depth,strong_);
     console.log(pos);
     return pos;
@@ -223,24 +227,25 @@ function AI(){
 
 function Recordpos(p){
     positions+=String(p);
-    if(currentPlayer==AIplayer) positions+=",";
-    else positions+=".";
+    positions+=(currentPlayer==AIplayer)? "," : ".";
+    let truenum=String(PutToPos(p));
+    if (truenum.length === 1) truenum = truenum.padStart(2, '0');
+    state+=truenum;
+    state+=(currentPlayer==AIplayer)? "," : ".";
     return;
 }
 
 
 function PutToPos(pos){
-    if(first){
+    if(rotation===-1){
         if(pos===9) rotation=0;
         if(pos===14) rotation=1;
         if(pos===28) rotation=2;
         if(pos===23) rotation=3;
         if(txtname!=="whitestrong") rotation=0;
-        first=false;
     }
     let putrow = Math.floor((pos-1) / 6);
     let putcol = (pos-1) % 6;
-    
     return    rotationboard[rotation][putrow][putcol];
 }
 
@@ -252,87 +257,59 @@ canvas.addEventListener('click',async (event) => {
     const row = Math.floor(y / cellSize);
     const col = Math.floor(x / cellSize);
 
-    // クリックしたセルが空であれば石を置く
-    let truenum=0;
-    if (board[row][col] === 3) {
-        ReturnBoard(row, col);
+    if (board[row][col] === 3) {    // クリックしたセルが空であれば石を置く
         let num1=row*6+col+1;
-        act--;
-        truenum=String(PutToPos(num1));
-        if (truenum.length === 1) truenum = truenum.padStart(2, '0');
-        state+=truenum;
-        state+="." ;
-
-        console.log(num1);
+        console.log("put;",num1);
         Recordpos(num1);
+        ReturnBoard(row, col);
+
+        let num=GetPositions();
+        drawBoard();
+        if(num==0){
+            if(PassCheck(",")==true)return;
+            else{drawBoard();return;}
+        }  
         /*if (Module._multiply_by_two) {
             var result = Module._multiply_by_two(10);
             console.log("The result is: " + result);  // 結果をコンソールに出力
         } else {
             console.log("関数が準備できていません");
         }*/
-        board[row][col] = currentPlayer*2;
-        
-        currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
-        let num=GetPositions();
-        drawBoard();
-        if(num===0){//相手pass
-            state+="-1,";
-            currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
-            num=GetPositions();
-            if(num===0){
-                Result();
-                return;
-            }
-            else{
-                drawBoard();
-                document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
-                return;
-            }
-        }
-        document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
+
         //AIのターン
         while(true){//置けなくなるまでひたすら置いていく
-            drawBoard();
             await sleep(1000);//読む深さによってここの時間を変更する
             const start = performance.now();
             let put= await AI();
-            console.log("putpos:",put);
-            act--;
-                
-            if (put.length === 1) put = put.padStart(2, '0');
-            state+=put+",";
+
             Recordpos(put);
-            put=String(PutToPos(put));
-
-
+            put=String(put);
+            console.log("putpos:",put);
             const end = performance.now();
             console.log(`実行時間: ${(end - start).toFixed(4)} ms`);
-            
-            let putrow = Math.floor((put-1) / 6);
-            let putcol = (put-1) % 6;
-            ReturnBoard(putrow, putcol);
-            board[putrow][putcol] = currentPlayer*2;
+            ReturnBoard(Math.floor((put-1) / 6), (put-1) % 6);
             drawBoard();
-
-            currentPlayer = currentPlayer === 1 ? -1 : 1;  //プレイヤーが石をおける→break
             num=GetPositions();
-            if(num!==0) break;
-            state+="-1.";
-            currentPlayer = currentPlayer === 1 ? -1 : 1;  //自分が石をおける→continue  おけない場合はResult()で終了
-            num=GetPositions();
-            if(num===0){
-                Result();
-                return;
-            }   
-            else continue;
+            if(num==0){
+                if(PassCheck(".")==true)return;
+                else continue;
+            }
+            else break;
         }   
         drawBoard();
-        document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
-        
     }
 
 });
+
+
+function PassCheck(char){
+    state+=("-1"+char);
+    currentPlayer = currentPlayer === 1 ? -1 : 1;  //自分が石をおける→continue  おけない場合はResult()で終了
+    let num=GetPositions();
+    if(num===0){Result();return true;}//pass
+    else false;//no pass
+}
+
 
 
 function CountStone(player){
@@ -355,24 +332,14 @@ function Result(){
 }
 
 function Start(){
-    
     if (Number(AIplayer) === Number(currentPlayer)) {
-        //let put= AI();
-        let i=9;
-        let put=PutToPos(i);
+        let put=PutToPos(9);
         positions+=String(put)+",";
         console.log(put);
-        let putrow = Math.floor(put / 6);
-        let putcol = put % 6-1;
-        console.log("putrow:",putrow);
-        console.log("putcol:",putcol);
-        ReturnBoard(putrow, putcol);
-        board[putrow][putcol] = currentPlayer*2;
-        currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
+        ReturnBoard(Math.floor(put / 6), put % 6-1);//row,col
         state+=(String(put)+",");
         GetPositions();
         drawBoard();
-        document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
     }
     return;
 }
@@ -384,8 +351,9 @@ function Reset() {
     document.getElementById('status').style.color = "black";  // 黒色に戻す
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
     currentPlayer = 1;
-    first=true;
+    rotation=-1;
     state="";
+    positions="";
     for (let i = 0; i < gridSize; i++) 
         for (let j = 0; j < gridSize; j++) 
             board[i][j] = 0;
@@ -402,25 +370,20 @@ function Reset() {
 document.getElementById('startButton').addEventListener('click', () => {
     positions="";
     const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-    console.log("難易度:",difficulty);
+    //console.log("難易度:",difficulty);
     mode = true ? Number(difficulty) === 1 : false;
     if(mode==true)positions+="1:";
     else positions+="-1:";
-    
-
-
     AIplayer = document.querySelector('input[name="turn"]:checked').value;
     positions=positions+String(AIplayer)+":";
-        
-    act=14;
 
     if( Number(AIplayer)===-1) txtname="white";
     else txtname="black";
     if(mode==true) txtname+="strong";
-    else txtname+="weak";
+    else txtname+="poor";
 
-    console.log("txt:",txtname);
-    console.log("turn:",AIplayer);
+    //console.log("txt:",txtname);
+    //console.log("turn:",AIplayer);
     resetGame();
 });
 
@@ -442,7 +405,7 @@ window.addEventListener('resize', resizeCanvas);
 
 document.getElementById("generateTextButton").addEventListener("click", function() {
     document.getElementById("outputArea").innerText = "棋譜:"+positions; // 画面に表示
-    console.log("p:"+positions);
+    //console.log("p:"+positions);
 });
 
 
@@ -465,15 +428,11 @@ document.getElementById("copyButton").addEventListener("click", function() {
     }
 });
 
-async function Search1() {
-    let num=await Search();
-    return num;
-}
 
 
 async function Search() {
     let fileName = txtname+".txt"; // ファイル名
-    console.log("file:",fileName);
+    //console.log("file:",fileName);
     try {
 
         // fetchを使用してサーバーからファイルを非同期に取得
