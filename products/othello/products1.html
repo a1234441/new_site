@@ -24,30 +24,35 @@
         
         <br>
         <div class="game-settings">
-            <label for="difficulty">ゲームの難易度を選んでください：</label><br>
-            
-            <input type="radio" id="strong" name="difficulty" value="1" checked>
-            <label for="strong">最強モード</label><br>
-            
-            <input type="radio" id="weak" name="difficulty" value="-1">
-            <label for="weak">最弱モード</label><br>
+            <label for="difficulty">難易度：</label><br>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <input type="radio" id="strong" name="difficulty" value="1" checked>
+                <label for="strong">最強モード</label><br>
+                
+                <input type="radio" id="weak" name="difficulty" value="-1">
+                <label for="weak">最弱モード</label><br>
+            </div>
+            <br>
             
             <label for="difficulty">AIの手番:</label><br>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <input type="radio" id="before" name="turn" value="1" checked>
+                <label for="before">先手</label>
             
-            <input type="radio" id="before" name="turn" value="1" checked>
-            <label for="strong">先手</label><br>
+                <input type="radio" id="after" name="turn" value="-1">
+                <label for="after">後手</label>
+            </div>
+            <br>
             
-            <input type="radio" id="after" name="turn" value="-1">
-            <label for="weak">後手</label><br>
-
             <label for="stoneStyle">見た目：</label><br>
-
-            <input type="radio" id="normal" name="stoneStyle" value="normal" checked>
-            <label for="normal">Normal</label><br>
-        
-            <input type="radio" id="premium" name="stoneStyle" value="premium">
-            <label for="premium">Premium</label><br>
-
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <input type="radio" id="normal" name="stoneStyle" value="normal" checked>
+                <label for="normal">Normal</label><br>
+            
+                <input type="radio" id="premium" name="stoneStyle" value="premium">
+                <label for="premium">Premium</label><br>
+            </div>
+            <br>
             <button id="startButton">ゲーム開始</button>
         </div>
         <canvas id="othelloBoard"></canvas>
