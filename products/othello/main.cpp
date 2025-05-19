@@ -3,7 +3,14 @@
 using namespace std;
 bool mode = true;    // true...最強モード   false...最弱モード
 
-
+/*emcc main.cpp -o searchCore.js `
+  -s MODULARIZE=1 `
+  -s ENVIRONMENT=worker `
+  -s EXPORT_NAME="Module" `
+  -s EXPORTED_FUNCTIONS="['_Search']" `
+  -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' `
+  -O3
+*/
 #define SIZE 6  // 6x6のボードに変更
 
 struct OthelloboardForBit{
