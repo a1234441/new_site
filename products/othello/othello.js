@@ -22,7 +22,8 @@ let stone="normal"; //normal or premium
 const gridSize = 6;
 let cellSize;
 let AIplayer=-1; // 1...黒 -1...白
-
+let requestIdCounter = 0;
+let requestId=0;
 
 let rotation=0;
 let rotationboard=[
@@ -252,6 +253,9 @@ function displayBoard(b) {
     console.log('');
 }
 
+
+let currentRequestId = 0;
+
 async function AI(){
     //AIとプレイヤーの石をビットに変換する
     OthelloBoard.playerBoard = 0n;
@@ -290,9 +294,32 @@ async function AI(){
     }
 
     //どこに置くべきか決定する
-    //console.log("depth:",depth);
-    let pos=Module._Search(OthelloBoard.playerBoard,OthelloBoard.opponentBoard,depth,strong_);
-    console.log(pos);
+    const worker = new Worker('searchWorker.js');
+    requestId = ++requestIdCounter;
+
+    const pos = await new Promise((resolve, reject) => {
+        const handleMessage = (e) => {
+            if (e.data.id !== requestId) return; // ← 古いレスポンスは無視
+            worker.removeEventListener("message", handleMessage);
+            resolve(e.data.result);
+        };
+
+        worker.addEventListener("message", handleMessage);
+        worker.onerror = (err) => {
+            worker.removeEventListener("message", handleMessage);
+            reject(err);
+        };
+
+        worker.postMessage({
+            id: requestId,
+            playerBoard: OthelloBoard.playerBoard.toString(),
+            opponentBoard: OthelloBoard.opponentBoard.toString(),
+            depth,
+            strong: strong_,
+            alpha: -10000
+        });
+    });
+    console.log("動作中ではない");
     return pos;
 }
 
@@ -349,10 +376,17 @@ canvas.addEventListener('click',async (event) => {
 
         //AIのターン
         while(true){//置けなくなるまでひたすら置いていく
-            await sleep(1000);//読む深さによってここの時間を変更する
+            const buttons = document.querySelectorAll("button");
+            buttons.forEach(btn => btn.disabled = true);
+
+            await sleep(1000); // 読む深さによる待ち
+
+            buttons.forEach(btn => btn.disabled = false);
+
             const start = performance.now();
             let put= await AI();
-
+            if(requestIdCounter!==requestId)return;
+            
             Recordpos(put);
             put=String(put);
             console.log("putpos:",put);
@@ -416,6 +450,10 @@ function Start(){
 }
 
 
+function roundUpLastTwoDigits(num) {
+    let rounded = Math.ceil(num / 100) * 100; // 下二桁を切り上げ
+    return rounded;
+}
 
 function Reset() {
     //initializeTable();
@@ -431,6 +469,7 @@ function Reset() {
     board[2][3] = 1;   // 黒
     board[3][2] = 1;   // 黒
     board[3][3] = -1;  // 白
+    requestIdCounter = roundUpLastTwoDigits(requestIdCounter);
     GetPositions();
     resizeCanvas();
     Start();

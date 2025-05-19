@@ -399,14 +399,14 @@ extern "C" {
 
 
 
-    int Search(uint64_t p,uint64_t o,int depth,int mode1) {//mode1=1最強　-1　雑魚
+    int Search(uint64_t p,uint64_t o,int depth,int mode1,int alpha1) {//mode1=1最強　-1　雑魚
         if(mode1==1) mode=true;
         else mode=false;
         InitializeTable();
         OthelloboardForBit b;
         b.playerBoard=p;
         b.opponentBoard=o;
-        int coord, res = -1, score, alpha = -10000, beta = 10000;
+        int coord, res = -1, score, alpha = alpha1, beta = 10000;
         uint64_t legalMoves = makeLegalBoard(b.playerBoard,b.opponentBoard);//自分のボードを入れる(白)
         for(uint64_t i=legalMoves;i!=0;i&=i-1){
             coord = SIZE*SIZE - GetNumberZeros(i);
