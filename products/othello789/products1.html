@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>縮小強解決オセロ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="../../index.html">ホーム</a>
+        <a href="../../indexs/product_host.html">Product</a>
+        <a href="../../indexs/dairy_host.html">Article</a>
+        <a href="../../indexs/contact.html">Contact</a>
+    </nav>
+
+    <div class="container">
+        <h1>縮小強解決オセロ(NewVer)</h1>
+        <p>6✕6におけるオセロを強解決し、その定石を基に石を打つオセロです。ネットに転がっている6✕6オセロボットとの大きな違いは、必ず最適な場所に着手するという点です。</p>
+        <p>まだ工事中なので、最適解ではなくそこそこ強い手を打ちます。</p>
+        <p style="color: red;">※お使いの端末の状態により、botの動作が遅くなる場合があります。事前にメモリを開放する他、その他のタスクを一度切ってからプレイすることをお勧めします。</p>
+        <br>
+        <p>※オセロボードの下に棋譜生成ボタンと、棋譜をコピーするボタンがあります。バグ報告にご利用ください</p>
+        
+        <br>
+        <div class="game-settings">
+            <label for="difficulty">難易度：</label><br>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <input type="radio" id="strong" name="difficulty" value="1" checked>
+                <label for="strong">最強モード</label><br>
+                
+                <input type="radio" id="weak" name="difficulty" value="-1">
+                <label for="weak">最弱モード</label><br>
+            </div>
+            <br>
+            
+            <label for="difficulty">AIの手番:</label><br>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <input type="radio" id="before" name="turn" value="1" checked>
+                <label for="before">先手</label>
+            
+                <input type="radio" id="after" name="turn" value="-1">
+                <label for="after">後手</label>
+            </div>
+            <br>
+            
+            <label for="stoneStyle">見た目：</label><br>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <input type="radio" id="normal" name="stoneStyle" value="normal" checked>
+                <label for="normal">Normal</label><br>
+            
+                <input type="radio" id="premium" name="stoneStyle" value="premium">
+                <label for="premium">Premium</label><br>
+            </div>
+            <br>
+            <button id="startButton">ゲーム開始</button>
+        </div>
+        <canvas id="othelloBoard"></canvas>
+        <div class="status" id="status">黒のターン</div>
+        <button id="generateTextButton">棋譜生成ボタン:</button>
+        <div class="text-container">
+            <textarea id="outputArea" rows="6" cols="60" readonly></textarea>
+            <button id="copyButton">棋譜コピーボタン</button>
+        </div>
+        <h2>更新</h2>
+        <h4>2025/3/3 ver1.0</h4>
+        <p>公開</p>
+        <br>
+        <h4>2025/3/4 ver1.1</h4>
+        <p>本来置くことができる位置に石が置けないバグの修正</p>
+        <br>
+        <h4>2025/3/5 ver2.0</h4>
+        <p>BigInt型を使用していたプログラムをNumber型の値2個で対応できるように修正,計算時間が25%程度短縮された</p>
+        <br>
+        <h4>2025/3/5 ver3.0</h4>
+        <p>wasmファイルを使用してc++から計算を行えるようになった。計算時間が80%程度短縮された</p>
+        <br>
+        <h4>2025/3/7 ver3.1</h4>
+        <p>文字色がもとに戻らないバグ修正</p>
+        <p>棋譜データを生成できるようにした</p>
+        <br>
+        <h4>2025/3/11 ver3.2</h4>
+        <p>botの探索深さと評価について修正</p>
+        <br>
+        <h4>2025/3/16 ver4.0</h4>
+        <p>完全解析した棋譜を用いて打つように変更(AIが後手、最強モードのみ)</p>
+        <br>
+        <h4>2025/3/28 ver4.1</h4>
+        <p>本来置けない位置に石を置く挙動を修正</p>
+        <br>
+        <h4>2025/4/30 ver4.2</h4>
+        <p>完全解析した棋譜を正しく読み込めないバグを修正</p>
+        <p>bot側が正しく盤面を読み込めないバグを修正</p>
+        <br>
+        <h4>2025/5/1 ver4.3</h4>
+        <p>細かいバグ修正</p>
+        <p>オセロに新しい質感モードを追加</p>
+        <br>
+        <h4>2025/5/19 ver5.0</h4>
+        <p>Web Assemblyのファイルを若干変更して、並列して計算が可能になった。</p>
+        <p>探索にかかる最大時間を50%程度減らした</p>
+        
+    </div>
+
+    <br><br><br>
+    <a href="../../index.html">ホーム</a>
+    <!--<script src="main.js"></script>-->
+    <script src="main.js"></script>
+    <script src="othello.js"></script>
+</body>
+</html>
