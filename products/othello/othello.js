@@ -10,7 +10,7 @@ const ctx = canvas.getContext('2d');
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
-let normaldepth=11;
+let normaldepth=14;
 let lastdepth=18;
 
 let positions="";//棋譜用
