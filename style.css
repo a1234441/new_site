@@ -6,6 +6,7 @@ body {
     flex-direction: column;
     align-items: center;
     font-weight: 300;
+    color: #000;
 }
 
 .container {
@@ -40,6 +41,7 @@ table {
     margin-top: 25px;
     border-collapse: collapse;
     border: 1px solid black;
+    color: #000;
 }
 
 td, th {
@@ -50,16 +52,4 @@ td, th {
 
 td:first-child {
     font-weight: bold;
-}
-
-.bar-container {
-    width: 100%;
-    background-color: #eee;
-    height: 20px;
-    position: relative;
-}
-
-.bar {
-    height: 100%;
-    background-color: #4CAF50;
 }
