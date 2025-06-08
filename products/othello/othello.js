@@ -6,7 +6,7 @@ const ctx = canvas.getContext('2d');
 
 // グリッドサイズとボード設定
 //203   234行目
-
+let search_score=-10000;
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
@@ -281,7 +281,13 @@ async function AI(){
     if(mode===true)strong_=1;
     else strong_=-1
     let depth;
-    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 18) {console.log("最終探索だピヨ");depth = lastdepth;}
+    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 18) {
+        if(txtname==="whitestrong" && search_score===-10000){
+            search_score=await Search1();
+            //console.log("search_score:",search_score);
+        }
+        console.log("最終探索だピヨ");depth = lastdepth;
+    }
     //else {depth = normaldepth};
     else if(txtname==="whitestrong"){
         console.log("定石だピヨ");
@@ -316,7 +322,7 @@ async function AI(){
             opponentBoard: OthelloBoard.opponentBoard.toString(),
             depth,
             strong: strong_,
-            alpha: -10000
+            alpha: search_score-1
         });
     });
     console.log("動作中ではない");
@@ -437,6 +443,7 @@ function Result(){
 }
 
 function Start(){
+    search_score=-10000;
     if (Number(AIplayer) === Number(currentPlayer)) {
         let put=PutToPos(9);
         positions+=String(put)+",";
@@ -459,6 +466,7 @@ function Reset() {
     //initializeTable();
     document.getElementById('status').style.color = "black";  // 黒色に戻す
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
+    document.getElementById('status').textContent = "黒のターン";
     currentPlayer = 1;
     rotation=-1;
     state="";
@@ -581,6 +589,42 @@ async function Search() {
     return 0; // 見つからなかった場合は 0 を返す
 }
 
+
+
+async function Search1() {
+    let fileName = txtname + ".txt"; // ファイル名
+    try {
+        // fetchを使用してサーバーからファイルを非同期に取得
+        const response = await fetch(fileName);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch file: ${response.status}`);
+            }
+        const content = await response.text();
+        const lines = content.split('\n');
+        // ★ここから追加・変更！ stateの末尾3文字を取り除く
+        let searchState = state; // まずstateの値をコピー
+        searchState = state.slice(0, -3); // 末尾3文字を取り除く
+        for (let index = 0; index < lines.length; index++) {
+            const line = lines[index].trim(); // 各行の前後空白や改行をtrimする
+            if (line.includes(searchState)) {
+                const colonIndex = line.indexOf(':'); // ':' の位置を探す
+                if (colonIndex !== -1 && colonIndex < line.length - 1) {
+                    let extractedStr = line.slice(colonIndex + 1).trim();
+                    const number = parseInt(extractedStr, 10);
+                    // NaN (Not a Number) でない、つまり有効な数字に変換できた場合
+                    if (!isNaN(number)) {
+                        return number; // 必要な数字を見つけたらすぐに返す
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        // エラーハンドリング
+        console.error('Error in Search function:', error);
+    }
+    console.log("No matching line found (including modified state):", searchState); // 見つからなかった場合のログ
+    return 0; // 見つからなかった場合は 0 を返す
+}
 
 
 function getBinarySegment(num) {
