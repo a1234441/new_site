@@ -57,28 +57,16 @@ td:first-child {
 .image-container {
     position: relative;
     display: inline-block;
-    /* width: 600px;  この行を削除またはコメントアウト */
-    /* height: 400px; この行も削除またはコメントアウト */
-
-    /* 代わりに以下のどちらかを設定 */
-    max-width: 100%; /* 親要素の幅を超えないようにする */
-    height: auto;    /* 幅に合わせて高さを自動調整 */
-
-    /* もし画像を正方形にしたいなどの希望があれば、padding-bottomでアスペクト比を制御できます */
-    /* 例：16:9のアスペクト比にしたい場合 */
-    /* width: 100%; */
-    /* padding-bottom: 56.25%; /* (9 / 16) * 100 */ */
-    /* height: 0; */
-    /* overflow: hidden; */
-
-    background-color: black;
+    width: 600px;  /* 画像のサイズを調整 */
+    height: 400px;  /* 高さも調整 */
+    background-color: black;  /* 背景色を黒に設定 */
 }
 
 .image-container img {
     width: 100%;
-    height: 100%; /* image-containerの高さに合わせる */
-    object-fit: contain;
-    transition: opacity 0.3s ease;
+    height: 100%;
+    object-fit: contain;  /* アスペクト比を保ちながら収める */
+    transition: opacity 0.3s ease;  /* 透明度の遷移 */
 }
 
 .image-container:hover img {
@@ -99,23 +87,6 @@ td:first-child {
     /* 長い文字列がはみ出るのを防ぐため、必要であれば追加 */
     white-space: normal; /* `nav a`にある`nowrap`の影響を受けないように念のため指定 */
     word-break: break-word; /* 単語の途中で改行できるようにする */
-}
-
-/* --- */
-
-/* スマホ用の調整 */
-@media (max-width: 768px) { /* 768px以下の画面幅に適用 */
-  .image-container {
-    /* スマホで横幅いっぱいに表示したい場合 */
-    width: 100%;
-    height: auto; /* 幅に合わせて高さを自動調整 */
-  }
-
-  .message {
-    font-size: 20px; /* スマホではフォントサイズを小さくする */
-    /* もしくは vw (viewport width) 単位を使って、画面幅に応じて調整 */
-    /* font-size: 4vw; */
-  }
 }
 
 .image-container:hover .message {
