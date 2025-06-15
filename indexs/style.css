@@ -27,7 +27,8 @@ nav a {
     text-decoration: none;
     padding: 10px 20px;
     font-size: 18px;
-    white-space: nowrap; /* 改行を防ぐ */
+    white-space: normal;
+    word-break: break-word; /* 長すぎる単語のときに改行できる */
 }
 
 nav a:hover {
