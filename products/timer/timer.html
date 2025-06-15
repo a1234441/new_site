@@ -6,20 +6,33 @@
     <link rel="stylesheet" href="../../style.css">
     <style>
 
-        img {
-          max-width: 80%;  /* 画面幅に合わせて画像を縮小 */
-          height: auto;     /* 高さを自動調整 */
+        ul {
+            list-style-type: none;
+            padding: 0;
         }
-        .red {
-        color: rgb(203, 0, 0);
+        li {
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #eee;
         }
-
-        .button-container {
-        display: flex;
-        justify-content: center; /* 横方向に中央寄せ */
-        margin-top: 50px; /* 上に少し余白をつける */
+        li strong {
+            color: #e74c3c; /* 赤系の色 */
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 5px;
         }
-
+        li p {
+            margin: 5px 0;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
 
       </style>
 </head>
@@ -40,6 +53,26 @@
         <p>また、タイマー終了音も自前で用意したものを使えます。(.wavファイル限定ですが)</p>
         <p>zipファイル内に、詳しい使い方が書いてあります。</p>
         <p>ダウンロードは<a href="https://github.com/a1234441/new_site/releases/download/timer/timer.zip">こちら</a>から</p>
+            <h2>オープンソースライセンス</h2>
+
+        <p>本ソフトウェアは、以下のオープンソースライブラリを利用して開発されています。</p>
+    
+        <ul>
+            <li>
+                <strong>CustomTkinter</strong>
+                <p>ライセンス: MIT License</p>
+                <p>詳細: <a href="https://github.com/TomSchimansky/CustomTkinter/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">GitHubリポジトリのLICENSEファイル</a></p>
+                <p>Copyright (c) 2020 Tom Schimansky</p>
+            </li>
+            <li>
+                <strong>Pyglet</strong>
+                <p>ライセンス: BSD 3-Clause License</p>
+                <p>詳細: <a href="http://pyglet.readthedocs.io/en/latest/programming_guide/license.html" target="_blank" rel="noopener noreferrer">Pyglet公式ライセンス情報ページ</a></p>
+                <p>Copyright (c) 2006-2008 Alex Holkner, Copyright (c) 2008-2022 Pyglet Contributors</p>
+            </li>
+        </ul>
+    
+        <p>また、本ソフトウェアはPython標準ライブラリ（PSF License）を利用しています。</p>
     </div>
 
     <br><br><br>
