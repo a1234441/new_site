@@ -74,6 +74,7 @@ td:first-child {
     opacity: 0.6;  /* 画像の色を薄くする */
 }
 
+
 .message {
     position: absolute;
     top: 50%;
@@ -82,15 +83,15 @@ td:first-child {
     color: white;
     font-size: 30px; /* PCでの表示 */
     font-weight: bold;
-    visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease;
-    /* 長い文字列がはみ出るのを防ぐため、必要であれば追加 */
-    white-space: normal; /* `nav a`にある`nowrap`の影響を受けないように念のため指定 */
-    word-break: break-word; /* 単語の途中で改行できるようにする */
+    pointer-events: none;  /* ホバーを邪魔しないため追加 */
+    /* 長い文字列がはみ出るのを防ぐための設定（そのままでOK） */
+    white-space: normal;
+    word-break: break-word;
 }
 
+
 .image-container:hover .message {
-    visibility: visible;  /* マウスオーバー時に表示 */
-    opacity: 1;  /* メッセージがフェードイン */
+    opacity: 1;
 }
