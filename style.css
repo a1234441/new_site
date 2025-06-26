@@ -44,6 +44,9 @@ table {
     color: #000;
 }
 
+.table-w50 { width: 50%;}
+.table-w100 {width: 100%;}
+
 td, th {
     border: 2px solid black;
     padding: 8px;
@@ -53,3 +56,60 @@ td, th {
 td:first-child {
     font-weight: bold;
 }
+
+
+
+
+/* summary要素のスタイル */
+summary {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer; /* マウスオーバー時にポインターを表示 */
+}
+
+/* details要素が開いたときのスタイル */
+details[open] summary {
+  background-color: #e0e0e0;
+  border-bottom: none;
+}
+
+/* detailsの中身のスタイル */
+details p, details h2, details ul, details table {
+  padding: 10px;
+  border: 1px solid #838383;
+  border-top: none;
+}
+
+
+details {
+    margin-bottom: 10px; /* 各詳細ブロックの間にスペース */
+    padding: 10px; 
+    border: 1px solid #7e7e7e; /* 薄い灰色の枠線 */
+    border-radius: 5px; /* 角を少し丸める */
+    background-color: #f9f9f9; /* ごく薄い背景色 */
+}
+
+/* ネストされた（子となる）<details> に異なるスタイルを適用 */
+details details {
+    background-color: #ffbebe; /* 少し青みがかった背景色 */
+    border-color: #c1c1c1; /* 青い枠線 */
+    margin-top: 10px; /* 親の詳細からの間隔 */
+    padding-left: 20px; /* 左側に少しインデント */
+}
+
+/* さらにネストされた <details>（もしあれば） */
+details details details {
+    background-color: #ffffff; /* 少し黄色みがかった背景色 */
+    border-color: #d4cb9c; /* 黄色の枠線 */
+    padding-left: 30px; /* さらにインデントを深く */
+}
+
+/* <summary> のスタイル（クリックできる部分） */
+summary {
+    font-weight: bold;
+    cursor: pointer; /* マウスオーバー時に指のカーソルを表示 */
+    padding: 5px 0; /* 上下の余白 */
+    outline: none; /* クリック時の点線枠を消す（任意） */
+}
+
