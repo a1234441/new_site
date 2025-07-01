@@ -22,6 +22,83 @@
     <p>上記のことを目標にして、頑張っていこうと思います。期限は2026/07/01まで</p>
 
 
+
+
+
+    <script src="../resources/programs/gragh.js"></script>
+
+    <!-- 折れ線グラフを表示するキャンバス -->
+    <canvas id="progressChart" width="600" height="300" style="display: block; margin: 0 auto;"></canvas>
+    <script>
+    const ctx = document.getElementById('progressChart').getContext('2d');
+
+
+const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['2025/7','2025/8','2025/9','2025/10','2025/11','2025/12','2026/1','2026/2','2026/3'],
+        datasets: [
+            {
+                label: 'EFSET Reading',data: [55],
+                borderColor: 'blue',backgroundColor: 'blue',tension: 0.3,pointRadius: 4,pointHoverRadius: 6
+            },
+            {
+                label: 'EFSET Listening',data: [36],
+                borderColor: 'green',backgroundColor: 'green',tension: 0.3,pointRadius: 4,pointHoverRadius: 6
+            },
+            {
+                label: 'EFSET Total',data: [46],
+                borderColor: 'red',backgroundColor: 'red',tension: 0.3,pointRadius: 4,pointHoverRadius: 6
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {min: 0,max: 100,title: {display: false}},
+            x: {ticks: {maxRotation: 45, minRotation: 45}}
+        },
+        plugins: {
+            tooltip: {callbacks: {label: function(context) {return `${context.dataset.label}: ${context.formattedValue}`;}}},
+            legend: {
+                onHover: (e, item, legend) => {
+                    const index = item.datasetIndex;
+                    chart.data.datasets.forEach((ds, i) => {ds.borderColor = i === index ? ds.originalColor : 'rgba(0,0,0,0.1)';ds.backgroundColor = i === index ? ds.originalColor : 'rgba(0,0,0,0.1)';});
+                    chart.update();
+                },
+                onLeave: () => {
+                    chart.data.datasets.forEach(ds => {ds.borderColor = ds.originalColor;ds.backgroundColor = ds.originalColor;});
+                    chart.update();
+                }
+            },
+            // グラフ上にホバーしたときの処理（pluginで対応）
+            hover: {
+                onHover: (event, elements) => {
+                    if (elements.length) {
+                        const hoveredIndex = elements[0].datasetIndex;
+                        chart.data.datasets.forEach((ds, i) => {ds.borderColor = i === hoveredIndex ? ds.originalColor : 'rgba(0,0,0,0.1)';ds.backgroundColor = i === hoveredIndex ? ds.originalColor : 'rgba(0,0,0,0.1)';});
+                        chart.update();
+                    } else {
+                        chart.data.datasets.forEach(ds => {ds.borderColor = ds.originalColor;ds.backgroundColor = ds.originalColor;});
+                        chart.update();
+                    }
+                }
+            }
+        },
+        onHover: (e) => {e.native.target.style.cursor = 'pointer';}
+    }
+});
+
+chart.data.datasets.forEach(ds => {ds.originalColor = ds.borderColor;});
+</script>
+
+
+
+
+
+
+
+
     <h2>英語の日記</h2>
     <p>英語の勉強の記録をここに大雑把に書こうと思います</p>
 
