@@ -38,58 +38,30 @@ const chart = new Chart(ctx, {
     data: {
         labels: ['2025/7','2025/8','2025/9','2025/10','2025/11','2025/12','2026/1','2026/2','2026/3'],
         datasets: [
-            {
-                label: 'EFSET Reading',data: [55],
-                borderColor: 'blue',backgroundColor: 'blue',tension: 0.3,pointRadius: 4,pointHoverRadius: 6
-            },
-            {
-                label: 'EFSET Listening',data: [36],
-                borderColor: 'green',backgroundColor: 'green',tension: 0.3,pointRadius: 4,pointHoverRadius: 6
-            },
-            {
-                label: 'EFSET Total',data: [46],
-                borderColor: 'red',backgroundColor: 'red',tension: 0.3,pointRadius: 4,pointHoverRadius: 6
-            }
+            {   label: 'EFSET Reading',data: [55],
+                borderColor: 'rgba(0,0,255,1)',backgroundColor: 'rgba(0,0,255,1)',baseColor: 'rgba(0,0,255,1)',tension: 0.3, pointRadius: 4, pointHoverRadius: 6},
+            {   label: 'EFSET Listening',data: [36],
+                borderColor: 'rgba(0,128,0,1)',backgroundColor: 'rgba(0,128,0,1)',baseColor: 'rgba(0,128,0,1)',tension: 0.3, pointRadius: 4, pointHoverRadius: 6},
+            {   label: 'EFSET Total',data: [46],
+                borderColor: 'rgba(255,0,0,1)',backgroundColor: 'rgba(255,0,0,1)',baseColor: 'rgba(255,0,0,1)',tension: 0.3, pointRadius: 4, pointHoverRadius: 6}
         ]
     },
     options: {
         responsive: true,
-        scales: {
-            y: {min: 0,max: 100,title: {display: false}},
-            x: {ticks: {maxRotation: 45, minRotation: 45}}
-        },
-        plugins: {
-            tooltip: {callbacks: {label: function(context) {return `${context.dataset.label}: ${context.formattedValue}`;}}},
-            legend: {
-                onHover: (e, item, legend) => {
-                    const index = item.datasetIndex;
-                    chart.data.datasets.forEach((ds, i) => {ds.borderColor = i === index ? ds.originalColor : 'rgba(0,0,0,0.1)';ds.backgroundColor = i === index ? ds.originalColor : 'rgba(0,0,0,0.1)';});
-                    chart.update();
-                },
-                onLeave: () => {
-                    chart.data.datasets.forEach(ds => {ds.borderColor = ds.originalColor;ds.backgroundColor = ds.originalColor;});
-                    chart.update();
-                }
-            },
-            // グラフ上にホバーしたときの処理（pluginで対応）
-            hover: {
-                onHover: (event, elements) => {
-                    if (elements.length) {
-                        const hoveredIndex = elements[0].datasetIndex;
-                        chart.data.datasets.forEach((ds, i) => {ds.borderColor = i === hoveredIndex ? ds.originalColor : 'rgba(0,0,0,0.1)';ds.backgroundColor = i === hoveredIndex ? ds.originalColor : 'rgba(0,0,0,0.1)';});
-                        chart.update();
-                    } else {
-                        chart.data.datasets.forEach(ds => {ds.borderColor = ds.originalColor;ds.backgroundColor = ds.originalColor;});
-                        chart.update();
-                    }
-                }
-            }
-        },
-        onHover: (e) => {e.native.target.style.cursor = 'pointer';}
+        scales: {y: {min: 0, max: 100,title: { display: false }},x: {ticks: { maxRotation: 45, minRotation: 45 }}},
+        plugins: {tooltip: {callbacks: {label: ctx => `${ctx.dataset.label}: ${ctx.formattedValue}`}},
+            legend: {onHover: (e, item, legend) => { e.native.target.style.cursor = 'pointer';},onLeave: () => {chart.data.datasets.forEach(ds => {ds.borderColor = ds.baseColor;ds.backgroundColor = ds.baseColor;});chart.update();}}},
+        onHover: (event, elements) => {
+            if (elements.length) {
+                const hoveredIdx = elements[0].datasetIndex;
+                chart.data.datasets.forEach((ds, i) => {if (chart.isDatasetVisible(i)) {ds.borderColor = i === hoveredIdx ? ds.baseColor : ds.baseColor.replace(/[^,]+(?=\))/, '0.1');ds.backgroundColor = i === hoveredIdx ? ds.baseColor : ds.baseColor.replace(/[^,]+(?=\))/, '0.1');}});
+            } else {chart.data.datasets.forEach((ds, i) => {if (chart.isDatasetVisible(i)) {ds.borderColor = ds.baseColor;ds.backgroundColor = ds.baseColor;}});}
+            chart.update();
+            event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+        }
     }
 });
 
-chart.data.datasets.forEach(ds => {ds.originalColor = ds.borderColor;});
 </script>
 
 
