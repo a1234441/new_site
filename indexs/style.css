@@ -95,3 +95,156 @@ td:first-child {
 .image-container:hover .message {
     opacity: 1;
 }
+/* --- 記事一覧のデザイン（ここから追記） --- */
+
+
+
+.container1 {
+    /* 既存のcontainerスタイルに以下を追加または調整 */
+    width: 80%;
+    max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
+    padding: 30px; /* 上下左右の余白を少し増やす */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
+    border-radius: 8px; /* 角を丸くする */
+    margin-top: 30px; /* ナビゲーションとの間に少しスペース */
+    margin-bottom: 50px; /* ページ下部にスペース */
+}
+
+/* ページ全体のタイトル */
+.container1 h1 { /* container内のh1に適用されるようにセレクタを変更 */
+
+    text-align: center;
+    font-size: 2.5em; /* より大きく */
+    color: #2c3e50;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1; /* 下線を少し太く */
+}
+
+/* 各カテゴリーのスタイル */
+.article-category {
+    margin-bottom: 40px; /* 各カテゴリー間のスペース */
+}
+
+.article-category h2 {
+    font-size: 1.8em; /* カテゴリー見出しを大きく */
+    color: #34495e; /* カテゴリー見出しの色 */
+    margin-bottom: 20px;
+    border-left: 5px solid #3498db; /* 左側にアクセントライン */
+    padding-left: 15px;
+}
+
+/* 記事リストのスタイル */
+.article-list {
+    list-style: none; /* デフォルトのリストマーカーを削除 */
+    padding: 0;
+    margin: 0;
+}
+
+.article-list li {
+    margin-bottom: 15px; /* 各記事アイテム間のスペース */
+    border-bottom: 1px dashed #e0e0e0; /* 記事アイテムの下に点線 */
+    padding-bottom: 15px;
+}
+
+.article-list li:last-child {
+    border-bottom: none; /* 最後の記事アイテムには下線をつけない */
+    padding-bottom: 0;
+}
+
+.article-list a {
+    display: block; /* リンク全体をブロック化して、クリックしやすい範囲を広げる */
+    text-decoration: none; /* デフォルトの下線を削除 */
+    color: #34495e; /* リンクのデフォルト色 */
+    padding: 8px 10px; /* リンクの内側余白 */
+    border-radius: 5px; /* リンクの角を丸く */
+    transition: background-color 0.3s ease, color 0.3s ease; /* ホバー時のアニメーション */
+}
+
+.article-list a:hover {
+    background-color: #eaf6fe; /* ホバー時の背景色 */
+    color: #2980b9; /* ホバー時の文字色 */
+}
+
+.article-title {
+    font-size: 1.15em; /* タイトルを少し大きく */
+    font-weight: 600; /* 太めに */
+    display: block; /* タイトルを独立した行に */
+    margin-bottom: 3px; /* タイトルとメタ情報の間のスペース */
+}
+
+.article-meta {
+    font-size: 0.85em; /* メタ情報を小さく */
+    color: #7f8c8d; /* メタ情報の色 */
+    display: block;
+}
+
+/* --- レスポンシブ対応の追加 --- */
+@media (max-width: 768px) {
+    .container {
+        width: 95%; /* スマホでは幅を広く使う */
+        padding: 20px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .container h1 { /* container内のh1に適用されるようにセレクタを変更 */
+        font-size: 2em; /* スマホではタイトルを少し小さく */
+        margin-bottom: 30px;
+    }
+
+    .article-category h2 {
+        font-size: 1.5em; /* カテゴリー見出しを調整 */
+        padding-left: 10px;
+    }
+
+    .article-list a {
+        padding: 6px 8px; /* スマホではリンクのパディングを調整 */
+    }
+
+    .article-title {
+        font-size: 1.05em; /* スマホでは記事タイトルを少し小さく */
+    }
+
+    .article-meta {
+        font-size: 0.8em; /* スマホではメタ情報を少し小さく */
+    }
+
+    /* ナビゲーションのスマホ対応 */
+    nav {
+        padding: 10px 0;
+        display: flex; /* flexboxを追加して、アイテムを横並びにする */
+        flex-wrap: wrap; /* リンクが入りきらない場合、自動で折り返す */
+        justify-content: center; /* 中央寄せ */
+    }
+    nav a {
+        font-size: 15px; /* スマホではナビリンクを小さく */
+        padding: 8px 12px;
+        /* display: block; を削除し、flexboxで横並びを維持 */
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .container h1 { /* container内のh1に適用されるようにセレクタを変更 */
+        font-size: 1.8em;
+    }
+
+    nav a {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+    
+    .article-category h2 {
+        font-size: 1.3em;
+    }
+
+    .article-title {
+        font-size: 1em;
+    }
+}
+
+/* --- 記事一覧のデザイン（ここまで追記） --- */
