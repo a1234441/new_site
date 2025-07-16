@@ -102,6 +102,7 @@ td:first-child {
 .container1 {
     /* 既存のcontainerスタイルに以下を追加または調整 */
     width: 80%;
+    background-color: white;
     max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
     padding: 30px; /* 上下左右の余白を少し増やす */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
