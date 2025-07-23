@@ -6,14 +6,25 @@ body {
     flex-direction: column;
     align-items: center;
     font-weight: 300;
+    /* 競合: 2つ目のファイルには無かったが、1つ目のファイルにはあったため残す */
     color: #000;
 }
 
 .container {
     background-color: white;
+    /* 競合: 1つ目のファイルでは width: 80%;、2つ目のファイルでは width: 80%; と max-width: 960px; padding: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-radius: 8px; margin-top: 30px; margin-bottom: 50px; */
+    /* 2つ目のファイルの方が詳細な指定が多いため、そちらを優先し、1つ目のファイルをコメントアウトします。 */
+    /* width: 80%; */
+    /* padding: 20px; */
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+
     width: 80%;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
+    padding: 30px; /* 上下左右の余白を少し増やす */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
+    border-radius: 8px; /* 角を丸くする */
+    margin-top: 30px; /* ナビゲーションとの間に少しスペース */
+    margin-bottom: 50px; /* ページ下部にスペース */
 }
 
 nav {
@@ -28,6 +39,9 @@ nav a {
     text-decoration: none;
     padding: 10px 20px;
     font-size: 18px;
+    /* 競合: 2つ目のファイルにのみあったため追加 */
+    white-space: normal;
+    word-break: break-word; /* 長すぎる単語のときに改行できる */
 }
 
 nav a:hover {
@@ -37,15 +51,20 @@ nav a:hover {
 
 table {
     font-size: 14px;
+    /* 競合: 1つ目のファイルでは width: 50%;、2つ目のファイルでも width: 50%; なのでどちらでもOK。共通なのでコメントアウトなし */
     width: 50%;
     margin-top: 25px;
     border-collapse: collapse;
+    /* 競合: 1つ目のファイルでは border: 1px solid black;、2つ目のファイルでは border: 1px solid black; なので共通。コメントアウトなし */
     border: 1px solid black;
+    /* 競合: 1つ目のファイルにのみあったため追加 */
     color: #000;
 }
 
+/* 競合なし: どちらのファイルにも共通で存在するスタイル */
 .table-w50 { width: 50%;}
 .table-w100 {width: 100%;}
+
 
 td, th {
     border: 2px solid black;
@@ -57,34 +76,39 @@ td:first-child {
     font-weight: bold;
 }
 
-
-
+/* --- summary要素とdetails要素のスタイル (1つ目のファイルから) --- */
 
 /* summary要素のスタイル */
 summary {
-  background-color: #f0f0f0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  cursor: pointer; /* マウスオーバー時にポインターを表示 */
+    /* 競合: 1つ目のファイルの`summary`と、details要素の後の`summary`の重複。後者を優先。 */
+    /* background-color: #f0f0f0; */
+    /* padding: 10px; */
+    /* border: 1px solid #ccc; */
+    /* cursor: pointer; */
+
+    font-weight: bold; /* 後者のsummaryにのみあったプロパティ */
+    cursor: pointer; /* マウスオーバー時に指のカーソルを表示 */
+    padding: 5px 0; /* 上下の余白（元のpadding: 10px; と競合） */
+    outline: none; /* クリック時の点線枠を消す（任意） */
+    /* その他のプロパティは、detailsブロック内で設定されているため、ここでは適用しない */
 }
 
 /* details要素が開いたときのスタイル */
 details[open] summary {
-  background-color: #e0e0e0;
-  border-bottom: none;
+    background-color: #e0e0e0;
+    border-bottom: none;
 }
 
 /* detailsの中身のスタイル */
 details p, details h2, details ul, details table {
-  padding: 10px;
-  border: 1px solid #ffffff;
-  border-top: none;
+    padding: 10px;
+    border: 1px solid #ffffff;
+    border-top: none;
 }
-
 
 details {
     margin-bottom: 10px; /* 各詳細ブロックの間にスペース */
-    padding: 10px; 
+    padding: 10px;
     border: 1px solid #7e7e7e; /* 薄い灰色の枠線 */
     border-radius: 5px; /* 角を少し丸める */
     background-color: #ffffff; /* ごく薄い背景色 */
@@ -105,11 +129,193 @@ details details details {
     padding-left: 30px; /* さらにインデントを深く */
 }
 
-/* <summary> のスタイル（クリックできる部分） */
-summary {
-    font-weight: bold;
-    cursor: pointer; /* マウスオーバー時に指のカーソルを表示 */
-    padding: 5px 0; /* 上下の余白 */
-    outline: none; /* クリック時の点線枠を消す（任意） */
+/* --- 画像リンクのためのスタイル (2つ目のファイルから) --- */
+.image-container {
+    position: relative;
+    display: inline-block;
+    width: 600px;  /* 画像のサイズを調整 */
+    height: 400px; /* 高さも調整 */
+    background-color: black; /* 背景色を黒に設定 */
 }
 
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* アスペクト比を保ちながら収める */
+    transition: opacity 0.3s ease; /* 透明度の遷移 */
+}
+
+.image-container:hover img {
+    opacity: 0.6; /* 画像の色を薄くする */
+}
+
+.message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 30px; /* PCでの表示 */
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* ホバーを邪魔しないため追加 */
+    /* 長い文字列がはみ出るのを防ぐための設定（そのままでOK） */
+    white-space: normal;
+    word-break: break-word;
+}
+
+.image-container:hover .message {
+    opacity: 1;
+}
+
+/* --- 記事一覧のデザイン（2つ目のファイルから） --- */
+
+.container1 {
+    /* 既存のcontainerスタイルに以下を追加または調整 */
+    width: 80%;
+    background-color: white;
+    max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
+    padding: 30px; /* 上下左右の余白を少し増やす */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
+    border-radius: 8px; /* 角を丸くする */
+    margin-top: 30px; /* ナビゲーションとの間に少しスペース */
+    margin-bottom: 50px; /* ページ下部にスペース */
+}
+
+/* ページ全体のタイトル */
+.container1 h1 { /* container内のh1に適用されるようにセレクタを変更 */
+    text-align: center;
+    font-size: 2.5em; /* より大きく */
+    color: #2c3e50;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1; /* 下線を少し太く */
+}
+
+/* 各カテゴリーのスタイル */
+.article-category {
+    margin-bottom: 40px; /* 各カテゴリー間のスペース */
+}
+
+.article-category h2 {
+    font-size: 1.8em; /* カテゴリー見出しを大きく */
+    color: #34495e; /* カテゴリー見出しの色 */
+    margin-bottom: 20px;
+    border-left: 5px solid #3498db; /* 左側にアクセントライン */
+    padding-left: 15px;
+}
+
+/* 記事リストのスタイル */
+.article-list {
+    list-style: none; /* デフォルトのリストマーカーを削除 */
+    padding: 0;
+    margin: 0;
+}
+
+.article-list li {
+    margin-bottom: 15px; /* 各記事アイテム間のスペース */
+    border-bottom: 1px dashed #e0e0e0; /* 記事アイテムの下に点線 */
+    padding-bottom: 15px;
+}
+
+.article-list li:last-child {
+    border-bottom: none; /* 最後の記事アイテムには下線をつけない */
+    padding-bottom: 0;
+}
+
+.article-list a {
+    display: block; /* リンク全体をブロック化して、クリックしやすい範囲を広げる */
+    text-decoration: none; /* デフォルトの下線を削除 */
+    color: #34495e; /* リンクのデフォルト色 */
+    padding: 8px 10px; /* リンクの内側余白 */
+    border-radius: 5px; /* リンクの角を丸く */
+    transition: background-color 0.3s ease, color 0.3s ease; /* ホバー時のアニメーション */
+}
+
+.article-list a:hover {
+    background-color: #eaf6fe; /* ホバー時の背景色 */
+    color: #2980b9; /* ホバー時の文字色 */
+}
+
+.article-title {
+    font-size: 1.15em; /* タイトルを少し大きく */
+    font-weight: 600; /* 太めに */
+    display: block; /* タイトルを独立した行に */
+    margin-bottom: 3px; /* タイトルとメタ情報の間のスペース */
+}
+
+.article-meta {
+    font-size: 0.85em; /* メタ情報を小さく */
+    color: #7f8c8d; /* メタ情報の色 */
+    display: block;
+}
+
+/* --- レスポンシブ対応の追加 --- */
+/*
+@media (max-width: 768px) {
+    .container {
+        width: 95%; 
+        padding: 20px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .container h1 { 
+        font-size: 2em; 
+        margin-bottom: 30px;
+    }
+
+    .article-category h2 {
+        font-size: 1.5em; 
+        padding-left: 10px;
+    }
+
+    .article-list a {
+        padding: 6px 8px; 
+    }
+
+    .article-title {
+        font-size: 1.05em; 
+    }
+
+    .article-meta {
+        font-size: 0.8em; 
+    }
+
+    
+    nav {
+        padding: 10px 0;
+        display: flex;
+        flex-wrap: wrap; 
+        justify-content: center; 
+    }
+    nav a {
+        font-size: 15px; 
+        padding: 8px 12px;
+        
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .container h1 { 
+        font-size: 1.8em;
+    }
+
+    nav a {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+
+    .article-category h2 {
+        font-size: 1.3em;
+    }
+
+    .article-title {
+        font-size: 1em;
+    }
+}*/

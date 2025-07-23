@@ -6,13 +6,25 @@ body {
     flex-direction: column;
     align-items: center;
     font-weight: 300;
+    /* 競合: 2つ目のファイルには無かったが、1つ目のファイルにはあったため残す */
+    color: #000;
 }
 
 .container {
     background-color: white;
+    /* 競合: 1つ目のファイルでは width: 80%;、2つ目のファイルでは width: 80%; と max-width: 960px; padding: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-radius: 8px; margin-top: 30px; margin-bottom: 50px; */
+    /* 2つ目のファイルの方が詳細な指定が多いため、そちらを優先し、1つ目のファイルをコメントアウトします。 */
+    /* width: 80%; */
+    /* padding: 20px; */
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+
     width: 80%;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
+    padding: 30px; /* 上下左右の余白を少し増やす */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
+    border-radius: 8px; /* 角を丸くする */
+    margin-top: 30px; /* ナビゲーションとの間に少しスペース */
+    margin-bottom: 50px; /* ページ下部にスペース */
 }
 
 nav {
@@ -27,6 +39,7 @@ nav a {
     text-decoration: none;
     padding: 10px 20px;
     font-size: 18px;
+    /* 競合: 2つ目のファイルにのみあったため追加 */
     white-space: normal;
     word-break: break-word; /* 長すぎる単語のときに改行できる */
 }
@@ -38,11 +51,20 @@ nav a:hover {
 
 table {
     font-size: 14px;
+    /* 競合: 1つ目のファイルでは width: 50%;、2つ目のファイルでも width: 50%; なのでどちらでもOK。共通なのでコメントアウトなし */
     width: 50%;
     margin-top: 25px;
     border-collapse: collapse;
+    /* 競合: 1つ目のファイルでは border: 1px solid black;、2つ目のファイルでは border: 1px solid black; なので共通。コメントアウトなし */
     border: 1px solid black;
+    /* 競合: 1つ目のファイルにのみあったため追加 */
+    color: #000;
 }
+
+/* 競合なし: どちらのファイルにも共通で存在するスタイル */
+.table-w50 { width: 50%;}
+.table-w100 {width: 100%;}
+
 
 td, th {
     border: 2px solid black;
@@ -54,26 +76,78 @@ td:first-child {
     font-weight: bold;
 }
 
-/* 画像リンクのためのスタイル */
+/* --- summary要素とdetails要素のスタイル (1つ目のファイルから) --- */
+
+/* summary要素のスタイル */
+summary {
+    /* 競合: 1つ目のファイルの`summary`と、details要素の後の`summary`の重複。後者を優先。 */
+    /* background-color: #f0f0f0; */
+    /* padding: 10px; */
+    /* border: 1px solid #ccc; */
+    /* cursor: pointer; */
+
+    font-weight: bold; /* 後者のsummaryにのみあったプロパティ */
+    cursor: pointer; /* マウスオーバー時に指のカーソルを表示 */
+    padding: 5px 0; /* 上下の余白（元のpadding: 10px; と競合） */
+    outline: none; /* クリック時の点線枠を消す（任意） */
+    /* その他のプロパティは、detailsブロック内で設定されているため、ここでは適用しない */
+}
+
+/* details要素が開いたときのスタイル */
+details[open] summary {
+    background-color: #e0e0e0;
+    border-bottom: none;
+}
+
+/* detailsの中身のスタイル */
+details p, details h2, details ul, details table {
+    padding: 10px;
+    border: 1px solid #ffffff;
+    border-top: none;
+}
+
+details {
+    margin-bottom: 10px; /* 各詳細ブロックの間にスペース */
+    padding: 10px;
+    border: 1px solid #7e7e7e; /* 薄い灰色の枠線 */
+    border-radius: 5px; /* 角を少し丸める */
+    background-color: #ffffff; /* ごく薄い背景色 */
+}
+
+/* ネストされた（子となる）<details> に異なるスタイルを適用 */
+details details {
+    background-color: #ffbebe; /* 少し青みがかった背景色 */
+    border-color: #c1c1c1; /* 青い枠線 */
+    margin-top: 10px; /* 親の詳細からの間隔 */
+    padding-left: 20px; /* 左側に少しインデント */
+}
+
+/* さらにネストされた <details>（もしあれば） */
+details details details {
+    background-color: #ffffff; /* 少し黄色みがかった背景色 */
+    border-color: #d4cb9c; /* 黄色の枠線 */
+    padding-left: 30px; /* さらにインデントを深く */
+}
+
+/* --- 画像リンクのためのスタイル (2つ目のファイルから) --- */
 .image-container {
     position: relative;
     display: inline-block;
     width: 600px;  /* 画像のサイズを調整 */
-    height: 400px;  /* 高さも調整 */
-    background-color: black;  /* 背景色を黒に設定 */
+    height: 400px; /* 高さも調整 */
+    background-color: black; /* 背景色を黒に設定 */
 }
 
 .image-container img {
     width: 100%;
     height: 100%;
-    object-fit: contain;  /* アスペクト比を保ちながら収める */
-    transition: opacity 0.3s ease;  /* 透明度の遷移 */
+    object-fit: contain; /* アスペクト比を保ちながら収める */
+    transition: opacity 0.3s ease; /* 透明度の遷移 */
 }
 
 .image-container:hover img {
-    opacity: 0.6;  /* 画像の色を薄くする */
+    opacity: 0.6; /* 画像の色を薄くする */
 }
-
 
 .message {
     position: absolute;
@@ -85,19 +159,17 @@ td:first-child {
     font-weight: bold;
     opacity: 0;
     transition: opacity 0.3s ease;
-    pointer-events: none;  /* ホバーを邪魔しないため追加 */
+    pointer-events: none; /* ホバーを邪魔しないため追加 */
     /* 長い文字列がはみ出るのを防ぐための設定（そのままでOK） */
     white-space: normal;
     word-break: break-word;
 }
 
-
 .image-container:hover .message {
     opacity: 1;
 }
-/* --- 記事一覧のデザイン（ここから追記） --- */
 
-
+/* --- 記事一覧のデザイン（2つ目のファイルから） --- */
 
 .container1 {
     /* 既存のcontainerスタイルに以下を追加または調整 */
@@ -113,7 +185,6 @@ td:first-child {
 
 /* ページ全体のタイトル */
 .container1 h1 { /* container内のh1に適用されるようにセレクタを変更 */
-
     text-align: center;
     font-size: 2.5em; /* より大きく */
     color: #2c3e50;
@@ -238,7 +309,7 @@ td:first-child {
         font-size: 14px;
         padding: 6px 10px;
     }
-    
+
     .article-category h2 {
         font-size: 1.3em;
     }
@@ -247,5 +318,3 @@ td:first-child {
         font-size: 1em;
     }
 }
-
-/* --- 記事一覧のデザイン（ここまで追記） --- */
