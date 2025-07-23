@@ -6,42 +6,52 @@ body {
     flex-direction: column;
     align-items: center;
     font-weight: 300;
-    /* 競合: 2つ目のファイルには無かったが、1つ目のファイルにはあったため残す */
     color: #000;
+    /* bodyのデフォルトフォントサイズを設定。これがemやremの基準になる */
+    font-size: 16px; /* PCでの基準サイズ */
 }
 
 .container {
     background-color: white;
-    /* 競合: 1つ目のファイルでは width: 80%;、2つ目のファイルでは width: 80%; と max-width: 960px; padding: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-radius: 8px; margin-top: 30px; margin-bottom: 50px; */
-    /* 2つ目のファイルの方が詳細な指定が多いため、そちらを優先し、1つ目のファイルをコメントアウトします。 */
-    /* width: 80%; */
-    /* padding: 20px; */
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
-
     width: 80%;
-    max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
-    padding: 30px; /* 上下左右の余白を少し増やす */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
-    border-radius: 8px; /* 角を丸くする */
-    margin-top: 30px; /* ナビゲーションとの間に少しスペース */
-    margin-bottom: 50px; /* ページ下部にスペース */
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    margin-top: 30px;
+    margin-bottom: 50px;
 }
+
+/* --- 記事用の新しいコンテナクラス (変更なし) --- */
+.shallow-container {
+    background-color: white;
+    width: 85%; /* 少し広げる */
+    max-width: 960px; /* より広い最大幅を設定 */
+    padding: 20px; /* パディングを調整 (containerより少なめにしてコンテンツ領域を確保) */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
 
 nav {
     width: 100%;
     background-color: #333;
     padding: 10px 0;
     text-align: center;
+    /* nav a の折り返しを維持するため、flexboxは残します */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 nav a {
     color: white;
     text-decoration: none;
     padding: 10px 20px;
-    font-size: 18px;
-    /* 競合: 2つ目のファイルにのみあったため追加 */
+    font-size: 18px; /* navのみPCと同じサイズを維持 */
     white-space: normal;
-    word-break: break-word; /* 長すぎる単語のときに改行できる */
+    word-break: break-word;
 }
 
 nav a:hover {
@@ -50,16 +60,15 @@ nav a:hover {
 }
 
 table {
-    font-size: 14px;
-    /* 競合: 1つ目のファイルでは width: 50%;、2つ目のファイルでも width: 50%; なのでどちらでもOK。共通なのでコメントアウトなし */
-    width: 50%;
+    font-size: 14px; /* PCと同じサイズを維持 */
+    width: 50%; /* PCと同じ幅を維持 */
+    /* スマホでテーブルが小さくなりすぎても我慢してもらう方針なのでmin-width/max-width/width:100%は削除 */
     margin-top: 25px;
     border-collapse: collapse;
-    /* 競合: 1つ目のファイルでは border: 1px solid black;、2つ目のファイルでは border: 1px solid black; なので共通。コメントアウトなし */
     border: 1px solid black;
-    /* 競合: 1つ目のファイルにのみあったため追加 */
     color: #000;
 }
+
 
 /* 競合なし: どちらのファイルにも共通で存在するスタイル */
 .table-w50 { width: 50%;}
@@ -76,30 +85,19 @@ td:first-child {
     font-weight: bold;
 }
 
-/* --- summary要素とdetails要素のスタイル (1つ目のファイルから) --- */
-
-/* summary要素のスタイル */
+/* --- summary要素とdetails要素のスタイル (変更なし) --- */
 summary {
-    /* 競合: 1つ目のファイルの`summary`と、details要素の後の`summary`の重複。後者を優先。 */
-    /* background-color: #f0f0f0; */
-    /* padding: 10px; */
-    /* border: 1px solid #ccc; */
-    /* cursor: pointer; */
-
-    font-weight: bold; /* 後者のsummaryにのみあったプロパティ */
-    cursor: pointer; /* マウスオーバー時に指のカーソルを表示 */
-    padding: 5px 0; /* 上下の余白（元のpadding: 10px; と競合） */
-    outline: none; /* クリック時の点線枠を消す（任意） */
-    /* その他のプロパティは、detailsブロック内で設定されているため、ここでは適用しない */
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 0;
+    outline: none;
 }
 
-/* details要素が開いたときのスタイル */
 details[open] summary {
     background-color: #e0e0e0;
     border-bottom: none;
 }
 
-/* detailsの中身のスタイル */
 details p, details h2, details ul, details table {
     padding: 10px;
     border: 1px solid #ffffff;
@@ -107,46 +105,149 @@ details p, details h2, details ul, details table {
 }
 
 details {
-    margin-bottom: 10px; /* 各詳細ブロックの間にスペース */
+    margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #7e7e7e; /* 薄い灰色の枠線 */
-    border-radius: 5px; /* 角を少し丸める */
-    background-color: #ffffff; /* ごく薄い背景色 */
+    border: 1px solid #7e7e7e;
+    border-radius: 5px;
+    background-color: #ffffff;
 }
 
-/* ネストされた（子となる）<details> に異なるスタイルを適用 */
 details details {
-    background-color: #ffbebe; /* 少し青みがかった背景色 */
-    border-color: #c1c1c1; /* 青い枠線 */
-    margin-top: 10px; /* 親の詳細からの間隔 */
-    padding-left: 20px; /* 左側に少しインデント */
+    background-color: #ffbebe;
+    border-color: #c1c1c1;
+    margin-top: 10px;
+    padding-left: 20px;
 }
 
-/* さらにネストされた <details>（もしあれば） */
 details details details {
-    background-color: #ffffff; /* 少し黄色みがかった背景色 */
-    border-color: #d4cb9c; /* 黄色の枠線 */
-    padding-left: 30px; /* さらにインデントを深く */
+    background-color: #ffffff;
+    border-color: #d4cb9c;
+    padding-left: 30px;
 }
 
-/* --- 画像リンクのためのスタイル (2つ目のファイルから) --- */
+/* --- オセロゲーム用のスタイル (変更なし) --- */
+#othelloBoard {
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+    height: auto;
+}
+
+.status {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.game-settings {
+    text-align: center;
+}
+
+input[type="radio"] {
+    margin: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+label {
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+#startButton {
+    width: 200px;
+    margin: 20px auto;
+    background-color: #56ce3b;
+    color: rgb(0, 0, 0);
+    border: 2px solid black;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#startButton:hover {
+    background-color: #7eed60;
+}
+
+#generateTextButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #a53333;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#generateTextButton:hover {
+    background-color: #ff5151;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#outputArea {
+    width: 90%;
+    max-width: 400px;
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    box-sizing: border-box;
+    resize: none;
+    margin-bottom: 15px;
+}
+
+#copyButton {
+    width: 90%;
+    max-width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #e7ff4e;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+}
+
+#copyButton:hover {
+    background-color: #45a049;
+}
+
+/* --- 画像リンクのためのスタイル (変更なし) --- */
 .image-container {
     position: relative;
     display: inline-block;
-    width: 600px;  /* 画像のサイズを調整 */
-    height: 400px; /* 高さも調整 */
-    background-color: black; /* 背景色を黒に設定 */
+    width: 600px;
+    height: 400px;
+    background-color: black;
 }
 
 .image-container img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* アスペクト比を保ちながら収める */
-    transition: opacity 0.3s ease; /* 透明度の遷移 */
+    object-fit: contain;
+    transition: opacity 0.3s ease;
 }
 
 .image-container:hover img {
-    opacity: 0.6; /* 画像の色を薄くする */
+    opacity: 0.6;
 }
 
 .message {
@@ -155,12 +256,11 @@ details details details {
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-size: 30px; /* PCでの表示 */
+    font-size: 30px;
     font-weight: bold;
     opacity: 0;
     transition: opacity 0.3s ease;
-    pointer-events: none; /* ホバーを邪魔しないため追加 */
-    /* 長い文字列がはみ出るのを防ぐための設定（そのままでOK） */
+    pointer-events: none;
     white-space: normal;
     word-break: break-word;
 }
@@ -169,153 +269,79 @@ details details details {
     opacity: 1;
 }
 
-/* --- 記事一覧のデザイン（2つ目のファイルから） --- */
-
+/* --- 記事一覧のデザイン（変更なし） --- */
 .container1 {
-    /* 既存のcontainerスタイルに以下を追加または調整 */
     width: 80%;
     background-color: white;
-    max-width: 960px; /* 最大幅を設定して、大きすぎないようにする */
-    padding: 30px; /* 上下左右の余白を少し増やす */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 影を強調 */
-    border-radius: 8px; /* 角を丸くする */
-    margin-top: 30px; /* ナビゲーションとの間に少しスペース */
-    margin-bottom: 50px; /* ページ下部にスペース */
+    max-width: 960px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    margin-top: 30px;
+    margin-bottom: 50px;
 }
 
-/* ページ全体のタイトル */
-.container1 h1 { /* container内のh1に適用されるようにセレクタを変更 */
+.container1 h1 {
     text-align: center;
-    font-size: 2.5em; /* より大きく */
+    font-size: 2.5em;
     color: #2c3e50;
     margin-bottom: 40px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #ecf0f1; /* 下線を少し太く */
+    border-bottom: 2px solid #ecf0f1;
 }
 
-/* 各カテゴリーのスタイル */
 .article-category {
-    margin-bottom: 40px; /* 各カテゴリー間のスペース */
+    margin-bottom: 40px;
 }
 
 .article-category h2 {
-    font-size: 1.8em; /* カテゴリー見出しを大きく */
-    color: #34495e; /* カテゴリー見出しの色 */
+    font-size: 1.8em;
+    color: #34495e;
     margin-bottom: 20px;
-    border-left: 5px solid #3498db; /* 左側にアクセントライン */
+    border-left: 5px solid #3498db;
     padding-left: 15px;
 }
 
-/* 記事リストのスタイル */
 .article-list {
-    list-style: none; /* デフォルトのリストマーカーを削除 */
+    list-style: none;
     padding: 0;
     margin: 0;
 }
 
 .article-list li {
-    margin-bottom: 15px; /* 各記事アイテム間のスペース */
-    border-bottom: 1px dashed #e0e0e0; /* 記事アイテムの下に点線 */
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #e0e0e0;
     padding-bottom: 15px;
 }
 
 .article-list li:last-child {
-    border-bottom: none; /* 最後の記事アイテムには下線をつけない */
+    border-bottom: none;
     padding-bottom: 0;
 }
 
 .article-list a {
-    display: block; /* リンク全体をブロック化して、クリックしやすい範囲を広げる */
-    text-decoration: none; /* デフォルトの下線を削除 */
-    color: #34495e; /* リンクのデフォルト色 */
-    padding: 8px 10px; /* リンクの内側余白 */
-    border-radius: 5px; /* リンクの角を丸く */
-    transition: background-color 0.3s ease, color 0.3s ease; /* ホバー時のアニメーション */
+    display: block;
+    text-decoration: none;
+    color: #34495e;
+    padding: 8px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .article-list a:hover {
-    background-color: #eaf6fe; /* ホバー時の背景色 */
-    color: #2980b9; /* ホバー時の文字色 */
+    background-color: #eaf6fe;
+    color: #2980b9;
 }
 
 .article-title {
-    font-size: 1.15em; /* タイトルを少し大きく */
-    font-weight: 600; /* 太めに */
-    display: block; /* タイトルを独立した行に */
-    margin-bottom: 3px; /* タイトルとメタ情報の間のスペース */
+    font-size: 1.15em;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
 }
 
 .article-meta {
-    font-size: 0.85em; /* メタ情報を小さく */
-    color: #7f8c8d; /* メタ情報の色 */
+    font-size: 0.85em;
+    color: #7f8c8d;
     display: block;
 }
-
-/* --- レスポンシブ対応の追加 --- */
-/*
-@media (max-width: 768px) {
-    .container {
-        width: 95%; 
-        padding: 20px;
-        margin-top: 20px;
-        margin-bottom: 30px;
-    }
-
-    .container h1 { 
-        font-size: 2em; 
-        margin-bottom: 30px;
-    }
-
-    .article-category h2 {
-        font-size: 1.5em; 
-        padding-left: 10px;
-    }
-
-    .article-list a {
-        padding: 6px 8px; 
-    }
-
-    .article-title {
-        font-size: 1.05em; 
-    }
-
-    .article-meta {
-        font-size: 0.8em; 
-    }
-
-    
-    nav {
-        padding: 10px 0;
-        display: flex;
-        flex-wrap: wrap; 
-        justify-content: center; 
-    }
-    nav a {
-        font-size: 15px; 
-        padding: 8px 12px;
-        
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-    }
-
-    .container h1 { 
-        font-size: 1.8em;
-    }
-
-    nav a {
-        font-size: 14px;
-        padding: 6px 10px;
-    }
-
-    .article-category h2 {
-        font-size: 1.3em;
-    }
-
-    .article-title {
-        font-size: 1em;
-    }
-}*/
