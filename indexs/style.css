@@ -252,47 +252,48 @@ details details details {
 }
 
 /* --- レスポンシブ対応の追加 --- */
+/*
 @media (max-width: 768px) {
     .container {
-        width: 95%; /* スマホでは幅を広く使う */
+        width: 95%; 
         padding: 20px;
         margin-top: 20px;
         margin-bottom: 30px;
     }
 
-    .container h1 { /* container内のh1に適用されるようにセレクタを変更 */
-        font-size: 2em; /* スマホではタイトルを少し小さく */
+    .container h1 { 
+        font-size: 2em; 
         margin-bottom: 30px;
     }
 
     .article-category h2 {
-        font-size: 1.5em; /* カテゴリー見出しを調整 */
+        font-size: 1.5em; 
         padding-left: 10px;
     }
 
     .article-list a {
-        padding: 6px 8px; /* スマホではリンクのパディングを調整 */
+        padding: 6px 8px; 
     }
 
     .article-title {
-        font-size: 1.05em; /* スマホでは記事タイトルを少し小さく */
+        font-size: 1.05em; 
     }
 
     .article-meta {
-        font-size: 0.8em; /* スマホではメタ情報を少し小さく */
+        font-size: 0.8em; 
     }
 
-    /* ナビゲーションのスマホ対応 */
+    
     nav {
         padding: 10px 0;
-        display: flex; /* flexboxを追加して、アイテムを横並びにする */
-        flex-wrap: wrap; /* リンクが入りきらない場合、自動で折り返す */
-        justify-content: center; /* 中央寄せ */
+        display: flex;
+        flex-wrap: wrap; 
+        justify-content: center; 
     }
     nav a {
-        font-size: 15px; /* スマホではナビリンクを小さく */
+        font-size: 15px; 
         padding: 8px 12px;
-        /* display: block; を削除し、flexboxで横並びを維持 */
+        
     }
 }
 
@@ -301,7 +302,7 @@ details details details {
         padding: 15px;
     }
 
-    .container h1 { /* container内のh1に適用されるようにセレクタを変更 */
+    .container h1 { 
         font-size: 1.8em;
     }
 
@@ -317,4 +318,4 @@ details details details {
     .article-title {
         font-size: 1em;
     }
-}
+}*/
