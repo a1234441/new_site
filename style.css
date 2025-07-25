@@ -39,7 +39,6 @@ nav {
     background-color: #333;
     padding: 10px 0;
     text-align: center;
-    /* nav a の折り返しを維持するため、flexboxは残します */
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -49,10 +48,29 @@ nav a {
     color: white;
     text-decoration: none;
     padding: 10px 20px;
-    font-size: 18px; /* navのみPCと同じサイズを維持 */
+    font-size: 18px; 
     white-space: normal;
     word-break: break-word;
 }
+
+
+@media (max-width: 768px) { /* タブレットやスマートフォン向けのブレークポイント */
+    nav a {
+        font-size: 20px; /* スマートフォンでの文字サイズを大きくする */
+        padding: 15px 10px; /* スマートフォンでのタップエリアを広くする（左右は少し詰める） */
+        flex-basis: 25%; /* スマートフォンでのみ画面を4等分する */
+        flex-grow: 1; /* 余白があれば幅を広げる */
+        flex-shrink: 1; /* 必要であれば幅を縮める */
+        box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
+    }
+
+    /* ナビゲーション全体のパディングを調整することも検討できます */
+    nav {
+        padding: 15px 0;
+    }
+}
+
+
 
 nav a:hover {
     background-color: #555;
