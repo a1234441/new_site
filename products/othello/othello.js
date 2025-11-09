@@ -6,18 +6,34 @@ const ctx = canvas.getContext('2d');
 
 // グリッドサイズとボード設定
 //203   234行目
+
+
+// === flip animation settings ===
+const FLIP_DURATION = 1000; // ms（好みで調整）
+const EASE = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; // cubic easeInOut
+
+// 反転アニメのキュー {key:"r,c", row, col, from:1|-1, to:1|-1, start:ms}
+const flipAnims = new Map();
+
+// 毎フレーム駆動
+let rafId = 0;
+function tick() {
+  rafId = requestAnimationFrame(tick);
+  drawBoard(); // 毎フレーム描く（反転が無ければ通常描画になる）
+}
+if (!rafId) rafId = requestAnimationFrame(tick);
+
+
+
 let search_score=-10000;
 const table = new Array(64).fill(0);
 const SIZE = 6;
 let mode = true;    // true...最強モード   false...最弱モード
 let normaldepth=14;
 let lastdepth=18;
-
 let positions="";//棋譜用
-let state="";//調べる用
-
 let txtname="";
-let stone="normal"; //normal or premium
+let state=""; //棋譜用
 
 const gridSize = 6;
 let cellSize;
@@ -53,22 +69,55 @@ let OthelloBoard = {
     opponentBoard: 0n, 
 };
 
-// 石の描画
-function drawBoard() {
-    // 背景を黒に塗りつぶす
-    if(stone==="normal"){
-        ctx.fillStyle = '#006400';
-        ctx.fillRect(0, 0, cellSize*gridSize, cellSize*gridSize);
-    }
-    if(stone==="premium"){
-        // 緑のグラデーションを作成（明るい→暗い）
-        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        grad.addColorStop(0, '#228B22');  // 明るめの緑
-        grad.addColorStop(1, '#006400');  // 濃い緑
 
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, cellSize * gridSize, cellSize * gridSize);
-    }
+function drawStone(cx, cy, radius, color, scaleY = 1) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, scaleY); // ←縦つぶしで回転っぽく
+  // 本体
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI*2);
+  ctx.closePath();
+  ctx.fillStyle = (color === 1) ? '#000' : '#fff';
+  ctx.fill();
+  // 縁の陰影（軽い立体感）
+  ctx.lineWidth = Math.max(1, radius*0.08);
+  ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+  ctx.stroke();
+  // ハイライト
+  const grd = ctx.createRadialGradient(-radius*0.3, -radius*0.3, radius*0.1, 0, 0, radius);
+  if (color === 1) { // black
+    grd.addColorStop(0, 'rgba(255,255,255,0.10)');
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+  } else { // white
+    grd.addColorStop(0, 'rgba(255,255,255,0.7)');
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+  }
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function queueFlip(row, col, fromColor, toColor) {
+  const key = `${row},${col}`;
+  flipAnims.set(key, {
+    key, row, col, from: fromColor, to: toColor, start: performance.now()
+  });
+}
+
+
+
+
+
+// 石の描画
+/*function drawBoard() {
+    // 背景を黒に塗りつぶす
+
+    ctx.fillStyle = '#006400';
+    ctx.fillRect(0, 0, cellSize*gridSize, cellSize*gridSize);
+    
     // グリッド線を描画
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5*gridSize/50.;
@@ -91,61 +140,79 @@ function drawBoard() {
                 ctx.fillRect(col * cellSize+1, row * cellSize+1, cellSize-2, cellSize-2);
             }
             if (board[row][col] !== 0) {
-                if(stone==="normal"){
-                    ctx.beginPath();
-                    ctx.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, Math.PI * 2);
-                    if(board[row][col] === 1 || board[row][col] === 2) ctx.fillStyle='black';
-                    else ctx.fillStyle='white';
-                    ctx.fill();
-                }
-                if(stone==="premium"){
-                    ctx.beginPath();
-                    const cx = col * cellSize + cellSize / 2;
-                    const cy = row * cellSize + cellSize / 2;
-                    const radius = cellSize / 3;
-                    
-                    // グラデーション作成（光の当たる位置を少しズラすとリアル感アップ）
-                    const grad = ctx.createRadialGradient(cx - radius * 0.3, cy - radius * 0.3, radius * 0.2, cx, cy, radius);
-                    if (board[row][col] === 1 || board[row][col] === 2) {
-                        grad.addColorStop(0, '#666');  // 明るいグレー
-                        grad.addColorStop(0.5, '#333'); // ダークグレー
-                        grad.addColorStop(1, '#000');   // 黒
-                    } else {
-                        // 白石のグラデーション（白 → ライトグレー → 黄金色）
-                        grad.addColorStop(0, '#fff');    // 明るい白
-                        grad.addColorStop(0.7, '#ccc');  // ライトグレー
-                        grad.addColorStop(1, '#bdbdbd');  // ライトグレー
-                    }
-                    
-                    ctx.fillStyle = grad;
-                    
-                    // 軽く影をつけて立体感UP
-                    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-                    ctx.shadowBlur = 12;
-                    ctx.shadowOffsetX = 2;
-                    ctx.shadowOffsetY = 2;
-                    
-                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    // 黒石、白石の左上からの影を強化
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-                    ctx.shadowBlur = 13;
-                    ctx.shadowOffsetX = 8;  // 左上に影を移動
-                    ctx.shadowOffsetY = 8;
-                    
-                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    // 影をリセット
-                    ctx.shadowColor = 'transparent';
-                    ctx.shadowBlur = 0;
-                    ctx.shadowOffsetX = 0;
-                    ctx.shadowOffsetY = 0;
-                    
-                }
+                ctx.beginPath();
+                ctx.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, Math.PI * 2);
+                if(board[row][col] === 1 || board[row][col] === 2) ctx.fillStyle='black';
+                else ctx.fillStyle='white';
+                ctx.fill();
             }
         }
     }
+}*/
+
+function drawBoard() {
+  // 盤面背景と線はそのまま
+  ctx.fillStyle = '#006400';
+  ctx.fillRect(0, 0, cellSize*gridSize, cellSize*gridSize);
+
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 5*gridSize/50.;
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+    }
+  }
+
+  const now = performance.now();
+
+  // 石／候補描画
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      // マーカー
+      if (board[row][col] === 3 ) {
+        ctx.fillStyle = 'darkred';
+        ctx.fillRect(col * cellSize+1, row * cellSize+1, cellSize-2, cellSize-2);
+        continue;
+      }
+      if (board[row][col] === 2 || board[row][col] === -2) {
+        ctx.fillStyle = 'lightblue';
+        ctx.fillRect(col * cellSize+1, row * cellSize+1, cellSize-2, cellSize-2);
+      }
+
+      // 石本体
+      const cell = board[row][col];
+      if (cell !== 0) {
+        const cx = col * cellSize + cellSize / 2;
+        const cy = row * cellSize + cellSize / 2;
+        const r  = cellSize / 3;
+
+        const key = `${row},${col}`;
+        const anim = flipAnims.get(key);
+        if (anim) {
+          const t = Math.min(1, (now - anim.start) / FLIP_DURATION);
+          const tt = EASE(t);
+          // 0→0.5で from の面が潰れていく、0.5→1で to の面が開く
+          const scaleY = Math.abs(Math.cos(Math.PI * tt)); // 1→0→1
+          const showing = (tt < 0.5) ? anim.from : anim.to;
+          drawStone(cx, cy, r, showing, scaleY);
+
+          if (t >= 1) {
+            flipAnims.delete(key); // 完了
+          }
+        } else {
+          // 通常描画
+          const color = (cell === 1 || cell === 2) ? 1 : -1;
+          drawStone(cx, cy, r, color, 1);
+        }
+      }
+    }
+  }
+
+  // ターン表示は元のままでOK
 }
+
+
+
 
 // ウィンドウ幅に基づいてキャンバスをリサイズ
 /*function resizeCanvas() {
@@ -172,7 +239,7 @@ function resizeCanvas() {
 }
 
 
-function ReturnBoard(row , col) {
+/*function ReturnBoard(row , col) {
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
             if (board[i][j] === 3) board[i][j] = 0;
@@ -194,7 +261,50 @@ function ReturnBoard(row , col) {
     board[row ][col] = currentPlayer*2;
     currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
     document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
+}*/
+
+function ReturnBoard(row , col) {
+  // マーカー/直前置き石のリセットはそのまま
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      if (board[i][j] === 3) board[i][j] = 0;
+      if (board[i][j] === 2 || board[i][j] === -2) board[i][j] = board[i][j]/2;
+    }
+  }
+
+  let player = currentPlayer;
+
+  for (let [vx, vy] of vec_table) {
+    let flipList = [];
+    let x = col + vx;
+    let y = row + vy;
+
+    // まず“挟み列”を収集
+    while (x >= 0 && x < gridSize && y >= 0 && y < gridSize && board[y][x] === -player) {
+      flipList.push([x, y]);
+      x += vx; y += vy;
+    }
+    // 収束先が自石なら有効
+    if (x >= 0 && x < gridSize && y >= 0 && y < gridSize && (board[y][x] === player || board[y][x] === 2*player)) {
+      // ここで論理反転 + アニメ予約
+      for (let [fx, fy] of flipList)  {
+        // from は -player, to は player
+        queueFlip(fy, fx, -player, player);
+        board[fy][fx] = player; // ←ロジックは即時でOK（AI探索・合法手生成に影響しない）
+      }
+    }
+  }
+
+  // 置いた石そのものを“ポン”と出すアニメ（オプション）
+  // 置き石を2/-2で一旦描いてる仕様を尊重してそのまま
+  board[row][col] = currentPlayer*2;
+
+  currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
+  document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
 }
+
+
+
 
 function GetPositions() {
     let posnum=0;
@@ -498,7 +608,7 @@ document.getElementById('startButton').addEventListener('click', () => {
     else txtname="black";
     if(mode==true) txtname+="strong";
     else txtname+="poor";
-    stone = document.querySelector('input[name="stoneStyle"]:checked').value;
+
     //console.log("txt:",txtname);
     //console.log("turn:",AIplayer);
     resetGame();
@@ -549,7 +659,7 @@ document.getElementById("copyButton").addEventListener("click", function() {
 
 async function Search() {
     let fileName = txtname+".txt"; // ファイル名
-    //console.log("file:",fileName);
+
     try {
 
         // fetchを使用してサーバーからファイルを非同期に取得
@@ -586,6 +696,7 @@ async function Search() {
         // エラーハンドリング
         console.error('Error in Search function:', error);
     }
+    console.log("No matching line found:", state); // 見つからなかった場合のログ
     return 0; // 見つからなかった場合は 0 を返す
 }
 
@@ -593,6 +704,7 @@ async function Search() {
 
 async function Search1() {
     let fileName = txtname + ".txt"; // ファイル名
+
     try {
         // fetchを使用してサーバーからファイルを非同期に取得
         const response = await fetch(fileName);
