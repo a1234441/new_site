@@ -1,0 +1,40 @@
+<!-- htmlhint doctype-first:false -->
+<style>
+  /* ナビ全体の背景用（親の div） */
+  #site-nav {
+    width: 100%;
+    background-color: #333;
+  }
+
+  /* 中身の nav レイアウト */
+  #site-nav nav {
+    padding: 10px 0;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* リンクの見た目 */
+  #site-nav nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* ホバー時 */
+  #site-nav nav a:hover {
+    background-color: #555;
+    border-radius: 5px;
+  }
+</style>
+
+<nav>
+    <a href="/index.html">Home</a>
+    <a href="/products/index.html">Product</a>
+    <a href="/articles/index.html">Article</a>
+    <a href="/contact/index.html">Contact</a>
+</nav>
