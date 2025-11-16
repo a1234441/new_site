@@ -32,6 +32,36 @@
             text-decoration: underline;
         }
 
+        .button-container {
+        display: flex;
+        justify-content: center; /* 横方向に中央寄せ */
+        margin-top: 50px; /* 上に少し余白をつける */
+        }
+
+        .download-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #3883ca; /* ボタンの背景色 */
+        color: rgb(0, 0, 0); /* 文字色 */
+        border-radius: 5px; /* 角を丸く */
+        border: none;
+        transition: background-color 0.3s ease;
+        width: 250px; /* 横幅を広げる */
+        }
+
+        /* ホバー時の色変更 */
+        .download-button:hover {
+        background-color: #2d6394; /* ホバー時の背景色 */
+        }
+
+        /* ボタンがクリックされると少し下に移動する効果 */
+        .download-button:active {
+        transform: translateY(2px);
+        }
+
       </style>
 </head>
 <body>
@@ -45,7 +75,9 @@
         <p>設定画面を見ていただけるとわかりますが、設定を保存、読み出しができます。</p>
         <p>また、タイマー終了音も自前で用意したものを使えます。(.wavファイル限定ですが)</p>
         <p>zipファイル内に、詳しい使い方が書いてあります。</p>
-        <p>ダウンロードは<a href="https://github.com/a1234441/new_site/releases/download/timer/timer.zip">こちら</a>から</p>
+        <div class="button-container">
+            <a href="/resources/programs/othello.ex5" class="download-button" download>Download</a>
+        </div>
             <h2>オープンソースライセンス</h2>
 
         <p>本ソフトウェアは、以下のオープンソースライブラリを利用して開発されています。</p>

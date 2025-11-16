@@ -5,23 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>記事一覧</title>
     <link rel="stylesheet" href="/style.css">
+
+    <!-- ★ このページ専用のCSSをここに閉じ込める ★ -->
+    <style>
+    .shallow-container {
+        width: 80%;
+        background-color: white;
+        max-width: 1100px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+
+    .shallow-container h1 {
+        text-align: center;
+        font-size: 2.5em;
+        color: #2c3e50;
+        margin-bottom: 40px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #ecf0f1;
+    }
+
+    .article-category {
+        margin-bottom: 40px;
+    }
+
+    .article-category h2 {
+        font-size: 1.8em;
+        color: #34495e;
+        margin-bottom: 20px;
+        border-left: 5px solid #3498db;
+        padding-left: 15px;
+    }
+
+    .article-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .article-list li {
+        margin-bottom: 15px;
+        border-bottom: 1px dashed #e0e0e0;
+        padding-bottom: 15px;
+    }
+
+    .article-list li:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .article-list a {
+        display: block;
+        text-decoration: none;
+        color: #34495e;
+        padding: 8px 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .article-list a:hover {
+        background-color: #eaf6fe;
+        color: #2980b9;
+    }
+
+    .article-title {
+        font-size: 1.15em;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .article-meta {
+        font-size: 0.85em;
+        color: #7f8c8d;
+        display: block;
+    }
+    </style>
 </head>
 <body>
     <div id="site-nav"></div>
+
     <div class="shallow-container">
         <h1>記事一覧</h1>
 
         <section class="article-category">
             <h2>勉強</h2>
             <ul class="article-list">
-                <li><a href="/articles/2025_07_01_english.html">
-                    <span class="article-title">英語は9カ月でどれだけできるようになるのか</span>
-                    <span class="article-meta">2025年7月1日</span>
-                </a></li>
+                <li>
+                    <a href="/articles/2025_07_01_english.html">
+                        <span class="article-title">英語は9カ月でどれだけできるようになるのか</span>
+                        <span class="article-meta">2025年7月1日</span>
+                    </a>
+                </li>
             </ul>
         </section>
+    </div>
 
     <script src="/resources/programs/load-nav.js"></script>
-    </div>
 </body>
 </html>
