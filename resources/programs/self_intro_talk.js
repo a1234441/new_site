@@ -214,6 +214,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "このサイトでなにかおかしい部分があれば連絡お願いします",
   ];
 
+
+let randomPool = [...randomTalks];  // 今の周回でまだ出ていないやつ
   // ===== 4. タイピング表示＆操作ロジック =====
   const bubble      = document.getElementById("talk-bubble");
   const bubbleText  = document.getElementById("talk-bubble-text");
