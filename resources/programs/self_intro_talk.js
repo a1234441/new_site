@@ -315,11 +315,18 @@ document.addEventListener("DOMContentLoaded", () => {
     isTyping = false;
     choicesBox.style.display = "none";
 
-    const text = randomTalks[Math.floor(Math.random() * randomTalks.length)];
+    // プールが空になったら補充
+    if (randomPool.length === 0) {
+      randomPool = [...randomTalks];
+    }
+
+    // プールの中からランダムで1つ選び、取り除く
+    const idxInPool = Math.floor(Math.random() * randomPool.length);
+    const text = randomPool.splice(idxInPool, 1)[0];
+
     typeText(text);
-    // currentScript / lineIndex はそのままなので、
-    // その後「次へ」を押すと元の会話の続きに戻る
   }
+
 
   // ===== 5. イベント設定 =====
 
