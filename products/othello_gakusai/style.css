@@ -1,0 +1,160 @@
+body {
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 300;
+}
+
+.container {
+    background-color: white;
+    width: 80%;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    width: 100%;
+    background-color: #333;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+nav a:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/* オセロゲーム用のスタイル */
+#othelloBoard {
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+    height: auto;
+}
+
+.status {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 20px; /* 上下に少しスペースを追加 */
+}
+
+.game-settings {
+    text-align: center; /* 中央揃え */
+}
+
+input[type="radio"] {
+    margin: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+label {
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+#startButton {
+    width: 200px;  /* 横幅を長くする */
+    margin: 20px auto; /* 上下のマージンを調整してボタンを下に配置 */
+    background-color: #56ce3b;  /* 黄緑色 */
+    color: rgb(0, 0, 0);  /* ボタンの文字色を白にする */
+    border: 2px solid black;  /* 縁を黒にする */
+    padding: 10px;  /* 内側の余白 */
+    font-size: 16px;  /* 文字サイズ */
+    cursor: pointer;  /* ポインタを表示してクリック可能にする */
+    transition: background-color 0.3s ease;  /* ホバー時の色変更をスムーズにする */
+}
+
+#startButton:hover {
+    background-color: #7eed60;  /* ホバー時に色を変える */
+}
+
+#generateTextButton {
+    display: block;
+    margin: 20px auto; /* 上下の余白を調整 */
+    padding: 10px 20px;
+    background-color: #a53333;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#generateTextButton:hover {
+    background-color: #ff5151;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column; /* 縦並び */
+    align-items: center; /* 水平方向の中央 */
+    justify-content: flex-start; /* 上部に配置（垂直方向） */
+    width: 100%; /* 横幅100%にする */
+    padding: 20px; /* 画面端との余白 */
+    box-sizing: border-box; /* パディングも幅に含める */
+}
+
+#outputArea {
+    width: 90%; /* 最大90%の幅にする */
+    max-width: 400px; /* 画面が広い場合は最大400px */
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    box-sizing: border-box; /* はみ出し防止 */
+    resize: none; /* ユーザーがサイズ変更できないように */
+    margin-bottom: 15px; /* テキストエリアとボタンの間隔を調整 */
+}
+
+#copyButton {
+    width: 90%; /* スマホでもボタンが大きすぎないように */
+    max-width: 200px; /* 画面が広い場合は最大200px */
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px; /* テキストエリアとの間隔 */
+    cursor: pointer; /* カーソルをポインターに */
+    background-color: #e7ff4e;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+}
+
+#copyButton:hover {
+    background-color: #45a049; /* コピーボタンのホバー時の色 */
+}
+
+
+
+
+
+@media (max-width: 768px) { /* タブレットやスマートフォン向けのブレークポイント */
+    nav a {
+        font-size: 20px; /* スマートフォンでの文字サイズを大きくする */
+        padding: 15px 10px; /* スマートフォンでのタップエリアを広くする（左右は少し詰める） */
+        flex-basis: 25%; /* スマートフォンでのみ画面を4等分する */
+        flex-grow: 1; /* 余白があれば幅を広げる */
+        flex-shrink: 1; /* 必要であれば幅を縮める */
+        box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
+    }
+
+    /* ナビゲーション全体のパディングを調整することも検討できます */
+    nav {
+        padding: 15px 0;
+    }
+}

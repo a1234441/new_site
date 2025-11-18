@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>縮小強解決オセロ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #startButton {
+            width: 200px;
+            margin: 20px auto;
+            background-color: #56ce3b;
+            color: rgb(0, 0, 0);
+            border: 2px solid black;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #startButton:hover {
+            background-color: #7eed60;
+        }
+
+        #generateTextButton {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #a53333;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #generateTextButton:hover {
+            background-color: #ff5151;
+        }
+
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #outputArea {
+            width: 90%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        #copyButton {
+            width: 90%;
+            max-width: 200px;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #e7ff4e;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 5px;
+        }
+
+        #copyButton:hover {
+            background-color: #45a049;
+    }
+    </style>
+</head>
+<body>
+    <div id="site-nav"></div>
+
+    <div class="container">
+        <h1>最弱オセロ</h1>
+        <p>6✕6におけるオセロを強解決し、その定石を基に石を打つオセロです。今回は先手限定で遊べます。</p>
+        <p style="color: red;"> <strong><u>理論上は負けることが可能です。</u></strong> </p>
+        <p>ぜひがんばってください。</p>
+        <br>
+        <br>
+        <div class="game-settings">
+            <button id="startButton">START / RESTART</button>
+        </div>
+        <canvas id="othelloBoard"></canvas>
+        <div class="status" id="status">黒のターン</div>
+
+    </div>
+
+    <br><br><br>
+
+    
+    <br><br><br>
+    <!--<script src="main.js"></script>-->
+    <script src="othello.js"></script>
+</body>
+</html>
