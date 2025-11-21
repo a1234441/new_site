@@ -7,6 +7,48 @@ const ctx = canvas.getContext('2d');
 // グリッドサイズとボード設定
 //203   234行目
 
+// ===== 対戦成績（ローカル保存） =====
+const STATS_KEY = "othelloStats";
+
+let stats = {
+  black: 0,
+  white: 0,
+  draw: 0,
+};
+// ページ読み込み時に成績を読み込んで表示
+loadStats();
+renderStats();
+
+function loadStats() {
+  try {
+    const saved = localStorage.getItem(STATS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      stats = { ...stats, ...parsed }; // 足りないキーがあっても補完
+    }
+  } catch (e) {
+    console.error("成績読み込みエラー:", e);
+  }
+}
+
+function saveStats() {
+  try {
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  } catch (e) {
+    console.error("成績保存エラー:", e);
+  }
+}
+
+function renderStats() {
+  const bw = document.getElementById("blackWins");
+  const ww = document.getElementById("whiteWins");
+  const dw = document.getElementById("draws");
+  if (!bw || !ww || !dw) return; // HTMLがまだなら何もしない
+
+  bw.textContent = stats.black;
+  ww.textContent = stats.white;
+  dw.textContent = stats.draw;
+}
 
 // === flip animation settings ===
 const FLIP_DURATION = 1000; // ms（好みで調整）
@@ -548,6 +590,10 @@ function Result(){
     else document.getElementById('status').textContent = "引き分け";
     document.getElementById('status').style.color = "red";  // 黒に変更
     document.getElementById('status').style.fontWeight = 'bold';  // 太字に設定
+    saveStats();    // ローカルに保存
+    renderStats();  // 表示更新
+
+
 }
 
 function Start(){
@@ -569,6 +615,7 @@ function roundUpLastTwoDigits(num) {
     let rounded = Math.ceil(num / 100) * 100; // 下二桁を切り上げ
     return rounded;
 }
+
 
 function Reset() {
     //initializeTable();
