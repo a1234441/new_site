@@ -392,14 +392,14 @@ async function AI(){
     else strong_=-1
     let depth;
     if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 18) {
-        if(txtname==="whitestrong" && search_score===-10000){
+        if((txtname==="whitestrong" || txtname==="whitelose" ) && search_score===-10000){
             search_score=await Search1();
             //console.log("search_score:",search_score);
         }
         console.log("最終探索だピヨ");depth = lastdepth;
     }
     //else {depth = normaldepth};
-    else if(txtname==="whitestrong"){
+    else if(txtname==="whitestrong"  || txtname==="whitelose"){
         console.log("定石だピヨ");
         let num=await Search();
         return PutToPos(num);
@@ -456,7 +456,7 @@ function PutToPos(pos){
         if(pos===14) rotation=1;
         if(pos===28) rotation=2;
         if(pos===23) rotation=3;
-        if(txtname!=="whitestrong") rotation=0;
+        if(txtname!=="whitestrong" || txtname!=="whitelose") rotation=0;
     }
     let putrow = Math.floor((pos-1) / 6);
     let putcol = (pos-1) % 6;
