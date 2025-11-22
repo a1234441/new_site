@@ -584,18 +584,29 @@ function CountStone(player){
 }
 
 function Result(){
-    let black=CountStone(1);
-    let white=CountStone(-1);
-    if(black>white) document.getElementById('status').textContent = "黒の勝ち";
-    else if(white>black)document.getElementById('status').textContent = "白の勝ち";
-    else document.getElementById('status').textContent = "引き分け";
-    document.getElementById('status').style.color = "red";  // 黒に変更
-    document.getElementById('status').style.fontWeight = 'bold';  // 太字に設定
+    let black = CountStone(1);
+    let white = CountStone(-1);
+
+    if (black > white) {
+        document.getElementById('status').textContent = "黒の勝ち";
+        // 人間 = 黒 なので人間の勝ちをカウント
+        stats.black++;
+    } else if (white > black) {
+        document.getElementById('status').textContent = "白の勝ち";
+        // Bot = 白 なのでBotの勝ちをカウント
+        stats.white++;
+    } else {
+        document.getElementById('status').textContent = "引き分け";
+        stats.draw++;
+    }
+
+    document.getElementById('status').style.color = "red";
+    document.getElementById('status').style.fontWeight = 'bold';
+
     saveStats();    // ローカルに保存
     renderStats();  // 表示更新
-
-
 }
+
 
 function Start(){
     search_score=-10000;
