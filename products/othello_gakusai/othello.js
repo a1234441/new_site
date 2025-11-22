@@ -6,6 +6,21 @@ const ctx = canvas.getContext('2d');
 
 // グリッドサイズとボード設定
 //203   234行目
+function debugLog(msg) {
+  const el = document.getElementById("debugLog");
+  if (!el) return;
+  const time = new Date().toISOString().slice(11, 19);
+  el.textContent += `[${time}] ${msg}\n`;
+}
+const handleMessage = (e) => {
+  if (e.data.id !== requestId) return;
+  worker.removeEventListener("message", handleMessage);
+  if (e.data.error) {
+    debugLog("Worker error payload: " + e.data.error);
+  }
+  resolve(e.data.result);
+};
+
 
 // ===== 対戦成績（ローカル保存） =====
 const STATS_KEY = "othelloStats";
@@ -406,7 +421,7 @@ function displayBoard(b) {
 
 
 let currentRequestId = 0;
-
+/*
 async function AI(){
     console.log("rotation:",rotation);
     //AIとプレイヤーの石をビットに変換する
@@ -480,6 +495,89 @@ async function AI(){
     console.log("動作中ではない");
     return pos;
 }
+*/
+
+
+async function AI() {
+  debugLog("AI start");
+
+
+    //AIとプレイヤーの石をビットに変換する
+    OthelloBoard.playerBoard = 0n;
+    OthelloBoard.opponentBoard = 0n;
+    
+    for (let row = 0; row < gridSize; row++) {
+        let row1='';
+        for (let col = 0; col < gridSize; col++) {
+            if (Number(board[row][col]) === Number(AIplayer) || board[row][col] === Number(AIplayer)*2) {
+                row1 += 'B '; // 黒の石
+                OthelloBoard.playerBoard |= 1n << BigInt((5-row)*6+(5-col));
+            }
+            else if (Number(board[row][col]) === -Number(AIplayer) || board[row][col] === -Number(AIplayer)*2) {
+                row1 += 'W '; // 白の石
+                OthelloBoard.opponentBoard |= 1n << BigInt((5-row)*6+(5-col));
+            } 
+            else row1+= '. '; // 空き
+        }
+        //console.log(row1);
+    } 
+
+    let strong_;
+    if(mode===true)strong_=1;
+    else strong_=-1;
+    let depth;
+    if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 18) {
+        if( (txtname==="whitestrong" || txtname==="whitelose" )&& search_score===-10000){
+            search_score=await Search1();
+            //console.log("search_score:",search_score);
+        }
+        console.log("最終探索だピヨ");depth = lastdepth;
+    }
+
+    //else {depth = normaldepth};
+    else if(txtname==="whitestrong" || txtname==="whitelose"){
+        console.log("定石だピヨ");
+        let num=await Search();
+        return PutToPos(num);
+    }
+    else{
+        depth = normaldepth;
+        console.log("通常探索だピヨ");
+    }
+  const worker = new Worker('searchWorker.js');
+  requestId = ++requestIdCounter;
+
+  const pos = await new Promise((resolve, reject) => {
+    const handleMessage = (e) => {
+      if (e.data.id !== requestId) return;
+      worker.removeEventListener("message", handleMessage);
+      debugLog("AI result: " + JSON.stringify(e.data));
+      resolve(e.data.result);
+    };
+
+    worker.addEventListener("message", handleMessage);
+    worker.onerror = (err) => {
+      worker.removeEventListener("message", handleMessage);
+      debugLog("worker.onerror: " + err.message);
+      reject(err);
+    };
+
+    worker.postMessage({
+      id: requestId,
+      playerBoard: OthelloBoard.playerBoard.toString(),
+      opponentBoard: OthelloBoard.opponentBoard.toString(),
+      depth,
+      strong: strong_,
+      alpha: search_score-1
+    });
+  });
+
+  debugLog("AI end, pos=" + pos);
+  return pos;
+}
+
+
+
 
 function Recordpos(p){
     positions+=String(p);
@@ -542,6 +640,29 @@ canvas.addEventListener('click',async (event) => {
 
             const start = performance.now();
             let put= await AI();
+
+
+            //新しく追加した部分
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            if (!Number.isInteger(put) || put < 1 || put > 36) {
+            debugLog("INVALID AI MOVE: " + put);
+            document.getElementById('status').textContent = "AIエラー（" + put + "）";
+            document.getElementById('status').style.color = "red";
+
+            // とりあえずAIパス扱いに逃がす
+            if (PassCheck(".") === true) return;
+            else break;  // 自分の手番に戻す
+            }
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
             if(requestIdCounter!==requestId)return;
             
             Recordpos(put);
