@@ -608,6 +608,7 @@ function Result(){
 }
 
 
+
 function Start(){
     search_score=-10000;
     if (Number(AIplayer) === Number(currentPlayer)) {
@@ -631,6 +632,13 @@ function roundUpLastTwoDigits(num) {
 
 function Reset() {
     //initializeTable();
+    requestIdCounter = 0;
+    requestId = 0;
+    search_score = -10000;
+
+    // アニメキューもクリア（お好みだけど安全）
+    flipAnims.clear();
+
     document.getElementById('status').style.color = "black";  // 黒色に戻す
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
     document.getElementById('status').textContent = "黒のターン";
