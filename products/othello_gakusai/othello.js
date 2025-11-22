@@ -341,7 +341,7 @@ function ReturnBoard(row , col) {
   board[row][col] = currentPlayer*2;
 
   currentPlayer = currentPlayer === 1 ? -1 : 1;  // ターン交代
-  document.getElementById('status').textContent = currentPlayer === 1 ? "黒のターン" : "白のターン";
+  document.getElementById('status').textContent = currentPlayer === 1 ? "" : "";
 }
 
 
@@ -641,7 +641,7 @@ function Reset() {
 
     document.getElementById('status').style.color = "black";  // 黒色に戻す
     document.getElementById('status').style.fontWeight = 'normal';  // 元の太さに戻す
-    document.getElementById('status').textContent = "黒のターン";
+    document.getElementById('status').textContent = "";
     currentPlayer = 1;
     rotation=-1;
     state="";
