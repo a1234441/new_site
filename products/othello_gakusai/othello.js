@@ -408,6 +408,7 @@ function displayBoard(b) {
 let currentRequestId = 0;
 
 async function AI(){
+    console.log("rotation:",rotation);
     //AIとプレイヤーの石をビットに変換する
     OthelloBoard.playerBoard = 0n;
     OthelloBoard.opponentBoard = 0n;
@@ -497,7 +498,6 @@ function PutToPos(pos){
         if(pos===14) rotation=1;
         if(pos===28) rotation=2;
         if(pos===23) rotation=3;
-        if(txtname!=="whitestrong" || txtname!=="whitelose") rotation=0;
     }
     let putrow = Math.floor((pos-1) / 6);
     let putcol = (pos-1) % 6;
