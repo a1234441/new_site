@@ -47,6 +47,43 @@
             padding: 20px;
             box-sizing: border-box;
         }
+
+        #outputArea {
+            width: 90%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        #copyButton {
+            width: 90%;
+            max-width: 200px;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #e7ff4e;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 5px;
+        }
+
+        #copyButton:hover {
+            background-color: #45a049;
+    }
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
     .stats h2,
     .stats p {
     margin: 0;          /* 上下の余白をなくす */
@@ -79,7 +116,11 @@
         </div>
         <canvas id="othelloBoard"></canvas>
         <div class="status" id="status">黒のターン</div>
-
+        <button id="generateTextButton">棋譜生成ボタン:</button>
+        <div class="text-container">
+            <textarea id="outputArea" rows="6" cols="60" readonly></textarea>
+            <button id="copyButton">棋譜コピーボタン</button>
+        </div>
     </div>
 
     <br><br><br>
