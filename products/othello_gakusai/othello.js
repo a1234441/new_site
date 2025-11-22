@@ -264,7 +264,7 @@ function drawBoard() {
     drawBoard();
 }*/
 function resizeCanvas() {
-    const screenSize = Math.min(window.innerWidth * 0.8, 600); // CSS上の表示サイズ
+    const screenSize = Math.min(window.innerWidth * 0.75, 400); // CSS上の表示サイズ
     const dpr = window.devicePixelRatio || 1; // デバイスピクセル比（Retina対応）
 
     canvas.style.width = screenSize + "px";       // 表示サイズ（CSS）
@@ -430,7 +430,7 @@ async function AI(){
 
     let strong_;
     if(mode===true)strong_=1;
-    else strong_=-1
+    else strong_=-1;
     let depth;
     if(countBit(OthelloBoard.playerBoard)+countBit(OthelloBoard.opponentBoard) >= 18) {
         if( (txtname==="whitestrong" || txtname==="whitelose" )&& search_score===-10000){
@@ -439,6 +439,7 @@ async function AI(){
         }
         console.log("最終探索だピヨ");depth = lastdepth;
     }
+
     //else {depth = normaldepth};
     else if(txtname==="whitestrong" || txtname==="whitelose"){
         console.log("定石だピヨ");
@@ -496,7 +497,7 @@ function PutToPos(pos){
         if(pos===14) rotation=1;
         if(pos===28) rotation=2;
         if(pos===23) rotation=3;
-        if(txtname!=="whitestrong" || txtname==="whitelose") rotation=0;
+        if(txtname!=="whitestrong" || txtname!=="whitelose") rotation=0;
     }
     let putrow = Math.floor((pos-1) / 6);
     let putcol = (pos-1) % 6;
@@ -646,11 +647,11 @@ document.getElementById('startButton').addEventListener('click', () => {
     mode = false;
 
     positions+="1:";
-    AIplayer = 1;
+    AIplayer = -1;
     positions=positions+String(AIplayer)+":";
 
-    txtname="black";
-    txtname+="poor";
+    txtname="white";
+    txtname+="lose";
 
     //console.log("txt:",txtname);
     //console.log("turn:",AIplayer);

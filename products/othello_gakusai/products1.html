@@ -47,34 +47,14 @@
             padding: 20px;
             box-sizing: border-box;
         }
-
-        #outputArea {
-            width: 90%;
-            max-width: 400px;
-            padding: 10px;
-            font-size: 16px;
-            text-align: center;
-            box-sizing: border-box;
-            resize: none;
-            margin-bottom: 15px;
-        }
-
-        #copyButton {
-            width: 90%;
-            max-width: 200px;
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 10px;
-            cursor: pointer;
-            background-color: #e7ff4e;
-            color: rgb(0, 0, 0);
-            border: none;
-            border-radius: 5px;
-        }
-
-        #copyButton:hover {
-            background-color: #45a049;
+    .stats h2,
+    .stats p {
+    margin: 0;          /* 上下の余白をなくす */
+    line-height: 1.2;   /* 行間を少し詰める */
+    text-align: center;
     }
+
+
     </style>
 </head>
 <body>
@@ -85,6 +65,13 @@
         <p>6✕6におけるオセロを強解決し、その定石を基に石を打つオセロです。今回は先手限定で遊べます。</p>
         <p style="color: red;"> <strong><u>理論上は負けることが可能です。</u></strong> </p>
         <p>ぜひがんばってください。</p>
+        <div class="stats">
+            <h2 style="font-size: 2.5rem;">対戦成績</h2>
+            <p style="font-size: 1.8rem;">人間の勝ち: <span id="blackWins">0</span></p>
+            <p style="font-size: 1.8rem;">Botの勝ち: <span id="whiteWins">0</span></p>
+            <p style="font-size: 1.8rem;">引き分け: <span id="draws">0</span></p>
+        </div>
+
         <br>
         <br>
         <div class="game-settings">
@@ -94,12 +81,7 @@
         <div class="status" id="status">黒のターン</div>
 
     </div>
-    <div class="stats">
-<h2 style="font-size: 2.5rem;">対戦成績</h2>
-<p style="font-size: 1.8rem;">黒の勝ち: <span id="blackWins">0</span></p>
-<p style="font-size: 1.8rem;">白の勝ち: <span id="whiteWins">0</span></p>
-<p style="font-size: 1.8rem;">引き分け: <span id="draws">0</span></p>
-    </div>
+
     <br><br><br>
 
     

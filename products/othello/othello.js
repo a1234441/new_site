@@ -223,7 +223,7 @@ function drawBoard() {
     drawBoard();
 }*/
 function resizeCanvas() {
-    const screenSize = Math.min(window.innerWidth * 0.8, 600); // CSS上の表示サイズ
+    const screenSize = Math.min(window.innerWidth * 0.75, 400); // CSS上の表示サイズ
     const dpr = window.devicePixelRatio || 1; // デバイスピクセル比（Retina対応）
 
     canvas.style.width = screenSize + "px";       // 表示サイズ（CSS）
