@@ -6,44 +6,46 @@
   <title>制作物</title>
   <link rel="stylesheet" href="../style.css">
   <style>
-    /* --- 画像リンクのためのスタイル (変更なし) --- */
-    .image-container {
-        position: relative;
-        display: inline-block;
-        width: 600px;
-        height: 400px;
-        background-color: black;
-    }
 
-    .image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        transition: opacity 0.3s ease;
-    }
+  .image-container {
+      position: relative;
+      display: inline-block;
+      width: 600px;
+      height: 400px;
+      background-color: black;
+  }
 
-    .image-container:hover img {
-        opacity: 0.6;
-    }
+  /* ★ 画像を最初から少し暗くする */
+  .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: filter 0.5s ease, transform 0.5s ease;
+      filter: brightness(0.5); 
+  }
 
-    .message {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 30px;
-        font-weight: bold;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        white-space: normal;
-        word-break: break-word;
-    }
+  /* ★ 文字を最初から表示しておく */
+  .message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      opacity: 1;              /* ← ここを 0 → 1 に */
+      pointer-events: none;
+      white-space: normal;
+      word-break: break-word;
+      text-align: center;
+      text-shadow: 0 0 4px black; /* 背景と被っても読めるように */
+  }
 
-    .image-container:hover .message {
-        opacity: 1;
-    }
+  .image-container:hover img {
+      filter: brightness(0.7);
+      transform: scale(1.02);
+  }
+
 
 
 
