@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+
+<style>
+
+/* ===== ドット図（説明用）ここから追記 ===== */
+
+.diagram-wrap {
+    margin-top: 18px;
+}
+
+.diagram-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.diagram-box {
+    border: 1px solid #7e7e7e;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #ffffff;
+    flex: 1 1 320px;
+}
+
+.diagram-title {
+    font-weight: bold;
+    margin: 0 0 8px 0;
+}
+
+.dot-grid {
+    display: grid;
+    gap: 0;
+    border: 1px solid #000;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.dot-cell {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #7e7e7e; /* グリッド線 */
+    box-sizing: border-box;
+}
+
+.dot-one { background: #ff0000; }  /* 1:赤 */
+.dot-zero { background: #000000; } /* 0:黒 */
+
+/* 縮小で「拾うドット」を強調 */
+.dot-sample {
+    outline: 3px solid #00aaff;
+    outline-offset: -3px;
+}
+
+/* 拡大説明で「注目ドット」を強調 */
+.dot-focus {
+    outline: 3px solid #00cc00;
+    outline-offset: -3px;
+}
+
+.diagram-note {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* 矢印（拡大説明用） */
+.diagram-arrow {
+    font-weight: bold;
+    font-size: 18px;
+    padding: 0 8px;
+    line-height: 1;
+    align-self: center;
+}
+
+/* ===== ドット図（説明用）ここまで追記 ===== */
+
+
+</style>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ドット画像処理ツール</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <div id="site-nav"></div>
+  <div class="container">
+    <h1 style="text-align:center; margin:0 0 12px 0;">ドット画像処理ツール</h1>
+
+    <p style="margin:0 0 14px 0; font-size:16px; line-height:1.6;">
+      縮小は左上のドットからnドットずつごとにドットを取得して縮小をします。<br>
+      拡大は各ドットをn×nに複製して拡大をします。<br>
+      まず初めに縮小を行い、その後拡大を行います。縮小を特にせずに拡大だけを行う場合は、縮小比率を1に設定してください。<br>
+      入力：PNG / JPEG / WebP / GIF / BMP（GIFは先頭フレームのみ）<br>
+      出力：PNG / JPEG / WebP
+    </p>
+
+    <!-- ===== ファイル選択（クリックで開かないドロップ領域 + ボタンのみで選択） ===== -->
+    <div style="margin-top:10px;">
+      <div style="font-weight:bold; margin-bottom:6px;">画像をアップロード</div>
+
+      <div id="dropZone"
+           style="border:2px dashed #7e7e7e; border-radius:5px; background:#ffffff;
+                  padding:18px; min-height:120px; box-sizing:border-box;">
+        <div style="margin-bottom:10px; font-size:14px;">
+          ここに画像をドラッグ＆ドロップ
+        </div>
+
+        <button id="filePickButton"
+                type="button"
+                style="background:#2a86d8; border:none; border-radius:5px; color:#fff;
+                       padding:10px 14px; cursor:pointer; font-weight:bold;">
+          ファイルを選択
+        </button>
+
+        <div id="fileStatus" style="margin-top:10px; font-size:13px;">
+          未選択
+        </div>
+      </div>
+
+      <!-- 実ファイル入力は隠す（これにより「周辺クリックで開く」を防止） -->
+      <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp" style="display:none;">
+    </div>
+
+    <!-- ===== パラメータ ===== -->
+    <div style="margin-top:16px; display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+      <div>
+        <div style="font-weight:bold; margin-bottom:6px;">縮小比率 (n)</div>
+        <input type="number" id="shrinkFactor" value="4" min="1"
+               style="padding:8px; border:1px solid #7e7e7e; border-radius:5px; width:90px;">
+      </div>
+
+      <div>
+        <div style="font-weight:bold; margin-bottom:6px;">拡大比率 (n)</div>
+        <input type="number" id="enlargeFactor" value="4" min="1"
+               style="padding:8px; border:1px solid #7e7e7e; border-radius:5px; width:90px;">
+      </div>
+
+      <div>
+        <div style="font-weight:bold; margin-bottom:6px;">出力形式</div>
+        <select id="outputFormat"
+                style="padding:8px; border:1px solid #7e7e7e; border-radius:5px;">
+          <option value="image/png">PNG</option>
+          <option value="image/jpeg">JPEG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+      </div>
+
+      <div style="align-self:flex-end;">
+        <button id="processButton"
+                type="button"
+                style="background:#2a86d8; border:none; border-radius:5px; color:#fff;
+                       padding:10px 16px; cursor:pointer; font-weight:bold;">
+          処理して表示
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== プレビュー（サイズだけ表示） ===== -->
+    <div style="margin-top:18px; display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+      <div style="flex:1 1 320px; border:1px solid #7e7e7e; border-radius:5px; padding:12px; background:#ffffff;">
+        <div style="font-weight:bold; margin-bottom:8px;">元画像</div>
+        <div id="inputSize" style="font-weight:bold;">—</div>
+        <img id="inputPreview" alt="元画像" style="display:none; max-width:100%; height:auto; border:1px solid #000; margin-top:10px;">
+      </div>
+
+      <div style="flex:1 1 320px; border:1px solid #7e7e7e; border-radius:5px; padding:12px; background:#ffffff;">
+        <div style="font-weight:bold; margin-bottom:8px;">結果</div>
+        <div id="outputSize" style="font-weight:bold;">—</div>
+        <img id="resultImage" alt="結果" style="display:none; max-width:100%; height:auto; border:1px solid #000; margin-top:10px;">
+
+        <div id="downloadWrap" style="display:none; margin-top:12px;">
+          <a id="downloadAnchor" href="#" download="dot_image.png"
+             style="display:inline-block; background:#2a86d8; color:#fff; text-decoration:none;
+                    padding:10px 14px; border-radius:5px; font-weight:bold;">
+            結果をダウンロード
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 説明図（任意） ===== -->
+    <details style="margin-top:18px;">
+      <summary>縮小・拡大の仕組み（図）</summary>
+
+      <div style="margin-top:10px;">
+        <div style="font-weight:bold; margin-bottom:6px;">元画像（8×8）</div>
+        <div id="grid-original"></div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div style="font-weight:bold; margin-bottom:6px;">縮小（n=2）：拾うドット（青枠） → 縮小結果</div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+          <div>
+            <div id="grid-shrink2-src"></div>
+            <div style="font-size:15px; margin-top:6px;">2×2ごとに左上を取得</div>
+          </div>
+          <div>
+            <div id="grid-shrink2-out"></div>
+            <div style="font-size:15px; margin-top:6px;">縮小結果</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div style="font-weight:bold; margin-bottom:6px;">縮小（n=3）：拾うドット（青枠） → 縮小結果</div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+          <div>
+            <div id="grid-shrink3-src"></div>
+            <div style="font-size:15px; margin-top:6px;">3×3ごとに左上を取得</div>
+          </div>
+          <div>
+            <div id="grid-shrink3-out"></div>
+            <div style="font-size:15px; margin-top:6px;">縮小結果</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div style="font-weight:bold; margin-bottom:6px;">拡大（n=2）：1ドットが2×2に複製</div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:15px; margin-bottom:6px;">元（1×1）</div>
+            <div id="grid-enlarge-src"></div>
+          </div>
+          <div style="font-weight:bold; font-size:18px;">→</div>
+          <div>
+            <div style="font-size:15px; margin-bottom:6px;">拡大後（2×2）</div>
+            <div id="grid-enlarge-out"></div>
+          </div>
+        </div>
+      </div>
+    </details>
+    <script src="../../resources/programs/load-nav.js"></script>
+  </div>
+
+  <!-- hidden canvases -->
+  <canvas id="shrinkCanvas" style="display:none;"></canvas>
+  <canvas id="enlargeCanvas" style="display:none;"></canvas>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const imageInput = document.getElementById('imageInput');
+      const filePickButton = document.getElementById('filePickButton');
+      const dropZone = document.getElementById('dropZone');
+      const fileStatus = document.getElementById('fileStatus');
+
+      const shrinkFactorInput = document.getElementById('shrinkFactor');
+      const enlargeFactorInput = document.getElementById('enlargeFactor');
+      const outputFormatSelect = document.getElementById('outputFormat');
+      const processButton = document.getElementById('processButton');
+
+      const inputPreview = document.getElementById('inputPreview');
+      const resultImage = document.getElementById('resultImage');
+      const inputSize = document.getElementById('inputSize');
+      const outputSize = document.getElementById('outputSize');
+
+      const downloadWrap = document.getElementById('downloadWrap');
+      const downloadAnchor = document.getElementById('downloadAnchor');
+
+      const shrinkCanvas = document.getElementById('shrinkCanvas');
+      const shrinkCtx = shrinkCanvas.getContext('2d', { willReadFrequently: true });
+      const enlargeCanvas = document.getElementById('enlargeCanvas');
+      const enlargeCtx = enlargeCanvas.getContext('2d', { willReadFrequently: true });
+
+      const ALLOWED_MIME = new Set(['image/png','image/jpeg','image/webp','image/gif','image/bmp']);
+      const ALLOWED_EXT = new Set(['png','jpg','jpeg','webp','gif','bmp']);
+
+      let currentObjectUrl = null;
+      let currentFile = null;
+
+      function getExt(name) {
+        const m = String(name || '').toLowerCase().match(/\.([a-z0-9]+)$/);
+        return m ? m[1] : '';
+      }
+      function isAllowedFile(file) {
+        const typeOk = file.type && ALLOWED_MIME.has(file.type);
+        const extOk = ALLOWED_EXT.has(getExt(file.name));
+        return typeOk || extOk;
+      }
+      function mimeToExt(mime) {
+        if (mime === 'image/png') return 'png';
+        if (mime === 'image/jpeg') return 'jpeg';
+        if (mime === 'image/webp') return 'webp';
+        return 'png';
+      }
+      function cleanupObjectUrl() {
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+      }
+      function resetOutput() {
+        resultImage.style.display = 'none';
+        downloadWrap.style.display = 'none';
+        outputSize.textContent = '—';
+      }
+
+      // ===== ファイル選択は「ボタン」だけで開く =====
+      filePickButton.addEventListener('click', () => {
+        imageInput.click();
+      });
+
+      // input から選択
+      imageInput.addEventListener('change', () => {
+        const file = imageInput.files && imageInput.files[0];
+        handleNewFile(file);
+      });
+
+      // ===== ドラッグ＆ドロップ（クリックでは開かない） =====
+      ['dragenter','dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.style.background = '#e0e0e0';
+        });
+      });
+      ['dragleave','drop'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.style.background = '#ffffff';
+        });
+      });
+      dropZone.addEventListener('drop', (e) => {
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file) handleNewFile(file);
+      });
+
+      function handleNewFile(file) {
+        cleanupObjectUrl();
+        currentFile = null;
+
+        inputPreview.style.display = 'none';
+        inputSize.textContent = '—';
+        fileStatus.textContent = '未選択';
+        resetOutput();
+
+        if (!file) return;
+
+        if (!isAllowedFile(file)) {
+          alert('対応形式は PNG / JPEG / WebP / GIF / BMP のみです。');
+          return;
+        }
+
+        currentFile = file;
+        currentObjectUrl = URL.createObjectURL(file);
+        inputPreview.src = currentObjectUrl;
+        inputPreview.style.display = 'block';
+        fileStatus.textContent = '選択済み';
+
+        inputPreview.onload = () => {
+          const w = inputPreview.naturalWidth || inputPreview.width;
+          const h = inputPreview.naturalHeight || inputPreview.height;
+          inputSize.textContent = `${w}×${h}`;
+        };
+        inputPreview.onerror = () => {
+          cleanupObjectUrl();
+          currentFile = null;
+          inputPreview.style.display = 'none';
+          inputSize.textContent = '—';
+          fileStatus.textContent = '未選択';
+          alert('画像の読み込みに失敗しました（ブラウザがデコードできない可能性があります）。');
+        };
+      }
+
+      // ===== 処理 =====
+      processButton.addEventListener('click', () => {
+        if (!currentFile || !currentObjectUrl) {
+          alert('画像を選択してください。');
+          return;
+        }
+
+        const shrinkFactor = parseInt(shrinkFactorInput.value, 10);
+        const enlargeFactor = parseInt(enlargeFactorInput.value, 10);
+        const outputFormat = outputFormatSelect.value;
+
+        if (!Number.isFinite(shrinkFactor) || shrinkFactor < 1 || !Number.isFinite(enlargeFactor) || enlargeFactor < 1) {
+          alert('縮小比率・拡大比率は 1 以上の整数で入力してください。');
+          return;
+        }
+
+        processButton.disabled = true;
+        processButton.textContent = '処理中...';
+
+        const img = new Image();
+        img.onload = () => {
+          try {
+            // 4) floorではなくceilで縮小サイズを作る（n=3なら 8→3）
+            const { data: shrunkData, width: sw, height: sh } = shrinkImageCeil(img, shrinkFactor);
+
+            const finalUrl = enlargeImage(shrunkData, sw, sh, enlargeFactor, outputFormat);
+
+            resultImage.src = finalUrl;
+            resultImage.style.display = 'block';
+            outputSize.textContent = `${sw * enlargeFactor}×${sh * enlargeFactor}`;
+
+            const ext = mimeToExt(outputFormat);
+            downloadAnchor.href = finalUrl;
+            downloadAnchor.setAttribute('download', `dot_image.${ext}`);
+            downloadWrap.style.display = 'block';
+          } catch (err) {
+            alert(err && err.message ? err.message : '処理に失敗しました。');
+          } finally {
+            processButton.disabled = false;
+            processButton.textContent = '処理して表示';
+          }
+        };
+        img.onerror = () => {
+          processButton.disabled = false;
+          processButton.textContent = '処理して表示';
+          alert('画像のデコードに失敗しました（ブラウザ依存）。');
+        };
+        img.src = currentObjectUrl;
+      });
+
+      // ===== 縮小（ceil版）：サンプル位置は x*n, y*n。範囲外は端にクランプ =====
+      function shrinkImageCeil(img, factor) {
+        const ow = img.naturalWidth || img.width;
+        const oh = img.naturalHeight || img.height;
+
+        const sw = Math.max(1, Math.ceil(ow / factor));
+        const sh = Math.max(1, Math.ceil(oh / factor));
+
+        shrinkCanvas.width = ow;
+        shrinkCanvas.height = oh;
+        shrinkCtx.clearRect(0, 0, ow, oh);
+        shrinkCtx.drawImage(img, 0, 0);
+
+        const src = shrinkCtx.getImageData(0, 0, ow, oh).data;
+        const dst = new Uint8ClampedArray(sw * sh * 4);
+
+        for (let y = 0; y < sh; y++) {
+          for (let x = 0; x < sw; x++) {
+            let ox = x * factor;
+            let oy = y * factor;
+            if (ox >= ow) ox = ow - 1;
+            if (oy >= oh) oy = oh - 1;
+
+            const srcIdx = (oy * ow + ox) * 4;
+            const dstIdx = (y * sw + x) * 4;
+
+            dst[dstIdx]     = src[srcIdx];
+            dst[dstIdx + 1] = src[srcIdx + 1];
+            dst[dstIdx + 2] = src[srcIdx + 2];
+            dst[dstIdx + 3] = src[srcIdx + 3];
+          }
+        }
+        return { data: dst, width: sw, height: sh };
+      }
+
+      // ===== 拡大：各ピクセルを factor×factor で複製 =====
+      function enlargeImage(shrunkData, sw, sh, factor, outputFormat) {
+        const ew = sw * factor;
+        const eh = sh * factor;
+
+        enlargeCanvas.width = ew;
+        enlargeCanvas.height = eh;
+        enlargeCtx.imageSmoothingEnabled = false;
+
+        const outImg = enlargeCtx.createImageData(ew, eh);
+        const out = outImg.data;
+
+        for (let y = 0; y < sh; y++) {
+          for (let x = 0; x < sw; x++) {
+            const sIdx = (y * sw + x) * 4;
+            const r = shrunkData[sIdx];
+            const g = shrunkData[sIdx + 1];
+            const b = shrunkData[sIdx + 2];
+            const a = shrunkData[sIdx + 3];
+
+            for (let fy = 0; fy < factor; fy++) {
+              for (let fx = 0; fx < factor; fx++) {
+                const ex = x * factor + fx;
+                const ey = y * factor + fy;
+                const eIdx = (ey * ew + ex) * 4;
+
+                out[eIdx]     = r;
+                out[eIdx + 1] = g;
+                out[eIdx + 2] = b;
+                out[eIdx + 3] = a;
+              }
+            }
+          }
+        }
+
+        enlargeCtx.putImageData(outImg, 0, 0);
+
+        if (outputFormat === 'image/jpeg') {
+          return enlargeCanvas.toDataURL(outputFormat, 0.9);
+        }
+        if (outputFormat === 'image/webp') {
+          const url = enlargeCanvas.toDataURL(outputFormat, 0.92);
+          if (typeof url === 'string' && url.startsWith('data:image/webp')) return url;
+          return enlargeCanvas.toDataURL('image/png');
+        }
+        return enlargeCanvas.toDataURL(outputFormat);
+      }
+
+      // ====== 説明図（n=3はceilで 3×3 になるよう反映） ======
+      // 8×8 円
+      const circle8 = [
+        "00111100",
+        "01000010",
+        "10000001",
+        "10000001",
+        "10000001",
+        "10000001",
+        "01000010",
+        "00111100"
+      ].map(r => r.split("").map(ch => ch === "1" ? 1 : 0));
+
+      function makeGrid(mountId, data2d, opts = {}) {
+        const mount = document.getElementById(mountId);
+        if (!mount) return;
+
+        const w = data2d[0].length, h = data2d.length;
+        const n = opts.sampleN || null;
+        const focus = opts.focus || null;
+
+        const grid = document.createElement("div");
+        grid.style.display = "grid";
+        grid.style.gridTemplateColumns = `repeat(${w}, 18px)`;
+        grid.style.border = "1px solid #000";
+        grid.style.width = "fit-content";
+
+        for (let y=0; y<h; y++) {
+          for (let x=0; x<w; x++) {
+            const cell = document.createElement("div");
+            cell.style.width = "18px";
+            cell.style.height = "18px";
+            cell.style.border = "1px solid #7e7e7e";
+            cell.style.boxSizing = "border-box";
+            cell.style.background = (data2d[y][x] === 1) ? "#ff0000" : "#000000";
+
+            // 縮小で拾う点（青枠）：ceilに合わせて outW/outH を決める
+            if (n && x % n === 0 && y % n === 0) {
+              const outW = Math.ceil(w / n);
+              const outH = Math.ceil(h / n);
+              if ((x / n) < outW && (y / n) < outH) {
+                cell.style.outline = "3px solid #00aaff";
+                cell.style.outlineOffset = "-3px";
+              }
+            }
+
+            // 拡大説明の注目点（緑枠）
+            if (focus && focus.x === x && focus.y === y) {
+              cell.style.outline = "3px solid #00cc00";
+              cell.style.outlineOffset = "-3px";
+            }
+
+            grid.appendChild(cell);
+          }
+        }
+        mount.innerHTML = "";
+        mount.appendChild(grid);
+      }
+
+      function shrinkTopLeftCeil(data2d, n) {
+        const h = data2d.length, w = data2d[0].length;
+        const outH = Math.ceil(h / n);
+        const outW = Math.ceil(w / n);
+
+        const out = Array.from({ length: outH }, (_, y) =>
+          Array.from({ length: outW }, (_, x) => {
+            let oy = y * n, ox = x * n;
+            if (ox >= w) ox = w - 1;
+            if (oy >= h) oy = h - 1;
+            return data2d[oy][ox];
+          })
+        );
+        return out;
+      }
+
+      function enlargeNearest(data2d, n) {
+        const h = data2d.length, w = data2d[0].length;
+        const out = Array.from({ length: h*n }, () => Array(w*n).fill(0));
+        for (let y=0; y<h; y++) for (let x=0; x<w; x++) {
+          for (let fy=0; fy<n; fy++) for (let fx=0; fx<n; fx++) {
+            out[y*n+fy][x*n+fx] = data2d[y][x];
+          }
+        }
+        return out;
+      }
+
+      makeGrid("grid-original", circle8);
+      makeGrid("grid-shrink2-src", circle8, { sampleN: 2 });
+      makeGrid("grid-shrink2-out", shrinkTopLeftCeil(circle8, 2));
+      makeGrid("grid-shrink3-src", circle8, { sampleN: 3 });
+      makeGrid("grid-shrink3-out", shrinkTopLeftCeil(circle8, 3));
+
+      makeGrid("grid-enlarge-src", [[1]], { focus: {x:0,y:0} });
+      // 2×2全体を強調した方が直感的なので、2×2は全セル緑枠にする
+      const e2 = enlargeNearest([[1]], 2);
+      const mountE = document.getElementById("grid-enlarge-out");
+      if (mountE) {
+        // 一旦描画してから全セルに枠
+        makeGrid("grid-enlarge-out", e2);
+        // 全セルへ緑枠（簡易）
+        Array.from(mountE.querySelectorAll("div > div")).forEach(cell => {
+          cell.style.outline = "3px solid #00cc00";
+          cell.style.outlineOffset = "-3px";
+        });
+      }
+    });
+  </script>
+</body>
+</html>

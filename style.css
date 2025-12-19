@@ -51,18 +51,7 @@ td:first-child {
     font-weight: bold;
 }
 
-/* --- summary要素とdetails要素のスタイル (変更なし) --- */
-summary {
-    font-weight: bold;
-    cursor: pointer;
-    padding: 5px 0;
-    outline: none;
-}
 
-details[open] summary {
-    background-color: #e0e0e0;
-    border-bottom: none;
-}
 
 details p, details h2, details ul, details table {
     padding: 10px;
@@ -70,10 +59,35 @@ details p, details h2, details ul, details table {
     border-top: none;
 }
 
+
+/* --- summary / details（差し替え推奨） --- */
 details {
     margin-bottom: 10px;
-    padding: 10px;
     border: 1px solid #7e7e7e;
     border-radius: 5px;
     background-color: #ffffff;
+    padding: 0;              /* タイトルと本文を分離しやすくする */
+    overflow: hidden;        /* 角丸をきれいに見せる */
+}
+
+/* タイトル部分は常に薄いグレーで固定 */
+summary {
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+
+    display: block;          /* 背景を横いっぱいに */
+    padding: 10px;
+    background-color: #e2e2e2; /* ←ここが「常に灰色」 */
+}
+
+/* 開いても色は変えない。区切り線だけ出す */
+details[open] summary {
+    background-color: #e2e2e2; /* 開いても同じ */
+    border-bottom: 1px solid #7e7e7e; /* 本文との境界 */
+}
+
+/* 本文側（summary以外）だけに余白を入れる */
+details > :not(summary) {
+    padding: 10px;
 }
