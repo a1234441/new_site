@@ -550,7 +550,7 @@ document.getElementById('startButton').addEventListener('click', () => {
   if (AIplayer === -1) txtname = "white";
   else txtname = "black";
   if (mode == true) txtname += "strong";
-  else txtname += "poor";
+  else txtname += "lose";
 
   resetGame();
 });
@@ -620,5 +620,6 @@ function countBit(board) {
     board = board + (board >> 32n);
     return Number(board & 0x0000007fn);
 }
+
 
 
