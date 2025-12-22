@@ -567,7 +567,49 @@ ensureAIWorker();
 Reset();
 Start();
 
-
+function Search(b) {
+    //console.log(1332)
+    let res = -1, score, alpha = -10000, beta = 10000;
+    let legalMoves = makeLegalBoard(b.playerBoardup, b.playerBoarddown, b.opponentBoardup,b.opponentBoarddown); // Use the player's board (white)
+    let depth;
+    if(countBit(b.playerBoardup) +countBit(b.playerBoarddown)+countBit(b.opponentBoardup)+countBit(b.opponentBoarddown) >= 19) depth = lastdepth;
+    else depth = normaldepth;
+    console.log("depth:",depth)  
+    //displayBoard(b);
+    //getBinarySegment(legalMoves[0]);
+    //getBinarySegment(legalMoves[1]);
+    while (legalMoves[0] !== 0 || legalMoves[1] !== 0) {
+        //console.log(".................................................")
+        if(legalMoves[1] !== 0){//下位ビット
+            let coord = SIZE * SIZE - getNumberZeros(legalMoves[1]);
+            let bitposition = legalMoves[1] & (~legalMoves[1] + 1);
+            let newB = structuredClone(b);
+            newB = flip0(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
+            score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+            console.log("coord:"+ coord + " score:" + score);
+            if (alpha < score) {
+                alpha = score;
+                res = coord;
+            }
+            legalMoves[1] &= legalMoves[1] - 1;
+        }   
+        else{//上位ビット
+            let coord = SIZE * SIZE / 2 - getNumberZeros(legalMoves[0]);
+            let bitposition = legalMoves[0] & (~legalMoves[0] + 1);
+            let newB = structuredClone(b);
+            newB = flip1(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
+            score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
+            console.log("coord:"+ coord + " score:" + score);
+            if (alpha < score) {
+                alpha = score;
+                res = coord;
+            }
+            legalMoves[0] &= legalMoves[0] - 1;
+        }
+    }
+    console.log("res:", res);
+    return res;
+}
 
 function countBit(board) {
     board = board - ((board >> 1n) & 0x5555555555555555n); 
@@ -578,3 +620,4 @@ function countBit(board) {
     board = board + (board >> 32n);
     return Number(board & 0x0000007fn);
 }
+
