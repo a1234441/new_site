@@ -567,49 +567,49 @@ ensureAIWorker();
 Reset();
 Start();
 
-function Search(b) {
-    //console.log(1332)
-    let res = -1, score, alpha = -10000, beta = 10000;
-    let legalMoves = makeLegalBoard(b.playerBoardup, b.playerBoarddown, b.opponentBoardup,b.opponentBoarddown); // Use the player's board (white)
-    let depth;
-    if(countBit(b.playerBoardup) +countBit(b.playerBoarddown)+countBit(b.opponentBoardup)+countBit(b.opponentBoarddown) >= 19) depth = lastdepth;
-    else depth = normaldepth;
-    console.log("depth:",depth)  
-    //displayBoard(b);
-    //getBinarySegment(legalMoves[0]);
-    //getBinarySegment(legalMoves[1]);
-    while (legalMoves[0] !== 0 || legalMoves[1] !== 0) {
-        //console.log(".................................................")
-        if(legalMoves[1] !== 0){//下位ビット
-            let coord = SIZE * SIZE - getNumberZeros(legalMoves[1]);
-            let bitposition = legalMoves[1] & (~legalMoves[1] + 1);
-            let newB = structuredClone(b);
-            newB = flip0(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
-            score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
-            console.log("coord:"+ coord + " score:" + score);
-            if (alpha < score) {
-                alpha = score;
-                res = coord;
-            }
-            legalMoves[1] &= legalMoves[1] - 1;
-        }   
-        else{//上位ビット
-            let coord = SIZE * SIZE / 2 - getNumberZeros(legalMoves[0]);
-            let bitposition = legalMoves[0] & (~legalMoves[0] + 1);
-            let newB = structuredClone(b);
-            newB = flip1(newB,newB.playerBoardup,newB.playerBoarddown,newB.opponentBoardup,newB.opponentBoarddown, bitposition);
-            score = -Nega_alpha(newB, depth - 1, false, -beta, -alpha);
-            console.log("coord:"+ coord + " score:" + score);
-            if (alpha < score) {
-                alpha = score;
-                res = coord;
-            }
-            legalMoves[0] &= legalMoves[0] - 1;
+async function Search() {
+    let fileName = txtname+".txt"; // ファイル名
+
+    try {
+
+        // fetchを使用してサーバーからファイルを非同期に取得
+        const response = await fetch(fileName);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch file: ${response.status}`);
         }
+        // ファイル内容をテキストとして取得
+        const content = await response.text();
+        // ファイル内容を行ごとに分割
+        const lines = content.split('\n');
+        console.log(state);
+        // 各行を通常のforループで処理（早期リターン可能）
+        for (let index = 0; index < lines.length; index++) {
+            const line = lines[index];
+            if (line.includes(state)) { // "state" が含まれるか確認
+                const stateIndex = line.indexOf(state);
+                
+                // state の直後の2文字を抽出するため、state.length だけ先頭をずらす
+                if (line.length >= stateIndex + state.length + 2) {
+                    let extractedStr = line.slice(stateIndex + state.length, stateIndex + state.length + 2);
+                    // もし extractedStr の長さが 1 文字なら、先頭に "0" を付加
+                    if (extractedStr.length === 1) {
+                        extractedStr = extractedStr.padStart(2, '0');
+                    }
+                    // 文字列を整数に変換
+                    const number = parseInt(extractedStr, 10);
+                    //console.log(`Found number on line ${index + 1}: ${number}`);
+                    return number; // 必要な数字を見つけたらすぐに返す
+                }
+            }
+        }
+    } catch (error) {
+        // エラーハンドリング
+        console.error('Error in Search function:', error);
     }
-    console.log("res:", res);
-    return res;
+    console.log("No matching line found:", state); // 見つからなかった場合のログ
+    return 0; // 見つからなかった場合は 0 を返す
 }
+
 
 function countBit(board) {
     board = board - ((board >> 1n) & 0x5555555555555555n); 
@@ -620,4 +620,5 @@ function countBit(board) {
     board = board + (board >> 32n);
     return Number(board & 0x0000007fn);
 }
+
 
