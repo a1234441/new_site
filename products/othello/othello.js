@@ -566,3 +566,15 @@ window.addEventListener('resize', resizeCanvas);
 ensureAIWorker();
 Reset();
 Start();
+
+
+
+function countBit(board) {
+    board = board - ((board >> 1n) & 0x5555555555555555n); 
+    board = (board & 0x3333333333333333n) + ((board >> 2n) & 0x3333333333333333n);
+    board = (board + (board >> 4n)) & 0x0f0f0f0f0f0f0f0fn;
+    board = board + (board >> 8n);
+    board = board + (board >> 16n);
+    board = board + (board >> 32n);
+    return Number(board & 0x0000007fn);
+}
