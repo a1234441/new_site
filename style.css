@@ -91,3 +91,20 @@ details[open] summary {
 details > :not(summary) {
     padding: 10px;
 }
+
+summary {
+    list-style: none;
+    position: relative;
+    padding-left: 28px;
+}
+
+summary::before {
+    content: "▶";
+    position: absolute;
+    left: 10px;
+    transition: transform 0.2s ease;
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}

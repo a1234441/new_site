@@ -4,7 +4,6 @@
 
 <style>
 
-/* ===== ドット図（説明用）ここから追記 ===== */
 
 .diagram-wrap {
     margin-top: 18px;
@@ -234,6 +233,36 @@
           </div>
         </div>
       </div>
+
+
+      <div style="margin-top:14px;">
+    <div style="font-weight:bold; margin-bottom:6px;">
+      (例)縮小 n=3 → 拡大 n=2 の流れ
+    </div>
+
+    <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+      <div>
+        <div style="font-size:14px; margin-bottom:4px;">元画像</div>
+        <div id="grid-flow-src"></div>
+      </div>
+
+      <div class="diagram-arrow">→</div>
+
+      <div>
+        <div style="font-size:14px; margin-bottom:4px;">縮小 n=3</div>
+        <div id="grid-flow-shrink"></div>
+      </div>
+
+      <div class="diagram-arrow">→</div>
+
+      <div>
+        <div style="font-size:14px; margin-bottom:4px;">拡大 n=2</div>
+        <div id="grid-flow-enlarge"></div>
+      </div>
+    </div>
+  </div>
+
+
     </details>
     <script src="../../resources/programs/load-nav.js"></script>
   </div>
@@ -248,7 +277,7 @@
       const filePickButton = document.getElementById('filePickButton');
       const dropZone = document.getElementById('dropZone');
       const fileStatus = document.getElementById('fileStatus');
-
+      let baseName = 'dot_image';    
       const shrinkFactorInput = document.getElementById('shrinkFactor');
       const enlargeFactorInput = document.getElementById('enlargeFactor');
       const outputFormatSelect = document.getElementById('outputFormat');
@@ -258,6 +287,8 @@
       const resultImage = document.getElementById('resultImage');
       const inputSize = document.getElementById('inputSize');
       const outputSize = document.getElementById('outputSize');
+      
+
 
       const downloadWrap = document.getElementById('downloadWrap');
       const downloadAnchor = document.getElementById('downloadAnchor');
@@ -270,8 +301,13 @@
       const ALLOWED_MIME = new Set(['image/png','image/jpeg','image/webp','image/gif','image/bmp']);
       const ALLOWED_EXT = new Set(['png','jpg','jpeg','webp','gif','bmp']);
 
+
+
       let currentObjectUrl = null;
       let currentFile = null;
+      function getBaseName(filename) {
+        return filename.replace(/\.[^.]+$/, "");
+      }
 
       function getExt(name) {
         const m = String(name || '').toLowerCase().match(/\.([a-z0-9]+)$/);
@@ -346,6 +382,7 @@
         }
 
         currentFile = file;
+        baseName = getBaseName(currentFile.name);
         currentObjectUrl = URL.createObjectURL(file);
         inputPreview.src = currentObjectUrl;
         inputPreview.style.display = 'block';
@@ -399,7 +436,7 @@
 
             const ext = mimeToExt(outputFormat);
             downloadAnchor.href = finalUrl;
-            downloadAnchor.setAttribute('download', `dot_image.${ext}`);
+            downloadAnchor.setAttribute('download', `${baseName}_resize.${ext}`);
             downloadWrap.style.display = 'block';
           } catch (err) {
             alert(err && err.message ? err.message : '処理に失敗しました。');
@@ -590,7 +627,12 @@
       makeGrid("grid-shrink2-out", shrinkTopLeftCeil(circle8, 2));
       makeGrid("grid-shrink3-src", circle8, { sampleN: 3 });
       makeGrid("grid-shrink3-out", shrinkTopLeftCeil(circle8, 3));
+      makeGrid("grid-flow-src", circle8);
+      const flowShrink = shrinkTopLeftCeil(circle8, 3);
+      const flowEnlarge = enlargeNearest(flowShrink, 2);
 
+      makeGrid("grid-flow-shrink", flowShrink);
+      makeGrid("grid-flow-enlarge", flowEnlarge);
       makeGrid("grid-enlarge-src", [[1]], { focus: {x:0,y:0} });
       // 2×2全体を強調した方が直感的なので、2×2は全セル緑枠にする
       const e2 = enlargeNearest([[1]], 2);
