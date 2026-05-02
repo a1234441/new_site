@@ -7,12 +7,34 @@
   <link rel="stylesheet" href="../style.css">
   <style>
 
+  * {
+      box-sizing: border-box;
+  }
+
+  .container {
+      width: min(90%, 1300px);
+  }
+
+  .works-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 600px));
+      gap: 24px;
+      justify-content: center;
+  }
+
   .image-container {
       position: relative;
-      display: inline-block;
-      width: 600px;
-      height: 400px;
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 3 / 2;
       background-color: black;
+      overflow: hidden;
+  }
+
+  .image-container a {
+      display: block;
+      width: 100%;
+      height: 100%;
   }
 
   /* ★ 画像を最初から少し暗くする */
@@ -31,14 +53,15 @@
       left: 50%;
       transform: translate(-50%, -50%);
       color: white;
-      font-size: 30px;
+      font-size: clamp(18px, 4vw, 30px);
       font-weight: bold;
-      opacity: 1;              /* ← ここを 0 → 1 に */
+      opacity: 1;
       pointer-events: none;
       white-space: normal;
       word-break: break-word;
       text-align: center;
-      text-shadow: 0 0 4px black; /* 背景と被っても読めるように */
+      text-shadow: 0 0 4px black;
+      width: 90%;
   }
 
   .image-container:hover img {
@@ -46,8 +69,24 @@
       transform: scale(1.02);
   }
 
+  @media screen and (max-width: 1000px) {
+      .works-grid {
+          grid-template-columns: minmax(0, 600px);
+      }
+  }
 
+  @media screen and (max-width: 600px) {
+      .container {
+          width: 100%;
+          padding: 16px;
+          margin-top: 16px;
+          border-radius: 0;
+      }
 
+      .works-grid {
+          gap: 16px;
+      }
+  }
 
   </style>
 </head>
@@ -56,29 +95,31 @@
     <div class="container">
       <h1>制作物一覧</h1>
       <p>ここでは、私が過去に制作したものを紹介しています。クリックすると詳細を見ることができます。</p>
-      <div class="image-container">
-        <a href="dot_resize/dot_resize.html">
-            <img src="../resources/images/normal.png" alt="image">
-            <div class="message"><br>ドット絵拡大縮小ツール</div>
-        </a>
-      </div>
-      <div class="image-container">
-        <a href="timer/timer.html">
-            <img src="../resources/images/timer.png" alt="image">
-            <div class="message">ポモドーロタイマー</div>
-        </a>
-      </div>
-      <div class="image-container">
-        <a href="othello_mt5/mt5_othello.html">
-            <img src="../resources/images/mt5othello.png" alt="image">
-            <div class="message">MT5用ミニオセロ</div>
-        </a>
-      </div>
-      <div class="image-container">
-        <a href="othello/products1.html">
-            <img src="../resources/images/othello.png" alt="image">
-            <div class="message">縮小版強解決オセロ</div>
-        </a>
+      <div class="works-grid">
+        <div class="image-container">
+          <a href="dot_resize/dot_resize.html">
+              <img src="../resources/images/normal.png" alt="image">
+              <div class="message">ドット絵拡大縮小ツール</div>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="timer/timer.html">
+              <img src="../resources/images/timer.png" alt="image">
+              <div class="message">ポモドーロタイマー</div>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="othello_mt5/mt5_othello.html">
+              <img src="../resources/images/mt5othello.png" alt="image">
+              <div class="message">MT5用ミニオセロ</div>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="othello/products1.html">
+              <img src="../resources/images/othello.png" alt="image">
+              <div class="message">縮小版強解決オセロ</div>
+          </a>
+        </div>
       </div>
       
     </div>

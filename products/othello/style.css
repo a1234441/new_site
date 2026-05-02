@@ -15,24 +15,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-nav {
-    width: 100%;
-    background-color: #333;
-    padding: 10px 0;
-    text-align: center;
-}
 
-nav a {
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    font-size: 18px;
-}
-
-nav a:hover {
-    background-color: #555;
-    border-radius: 5px;
-}
 
 /* オセロゲーム用のスタイル */
 #othelloBoard {
@@ -137,24 +120,4 @@ label {
 
 #copyButton:hover {
     background-color: #45a049; /* コピーボタンのホバー時の色 */
-}
-
-
-
-
-
-@media (max-width: 768px) { /* タブレットやスマートフォン向けのブレークポイント */
-    nav a {
-        font-size: 20px; /* スマートフォンでの文字サイズを大きくする */
-        padding: 15px 10px; /* スマートフォンでのタップエリアを広くする（左右は少し詰める） */
-        flex-basis: 25%; /* スマートフォンでのみ画面を4等分する */
-        flex-grow: 1; /* 余白があれば幅を広げる */
-        flex-shrink: 1; /* 必要であれば幅を縮める */
-        box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
-    }
-
-    /* ナビゲーション全体のパディングを調整することも検討できます */
-    nav {
-        padding: 15px 0;
-    }
 }

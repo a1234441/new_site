@@ -2,8 +2,11 @@
 <style>
   /* ナビ全体の背景用（親の div） */
   #site-nav {
-    width: 100%;
-    background-color: #333;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    box-sizing: border-box;
+    align-self: stretch;
   }
 
   /* 中身の nav レイアウト */
@@ -19,8 +22,8 @@
   #site-nav nav a {
     color: white;
     text-decoration: none;
-    padding: 10px 20px;
-    font-size: 18px;
+    padding: 10px clamp(10px, 4vw, 20px);
+    font-size: clamp(15px, 2.6vw, 18px);
     white-space: normal;
     word-break: break-word;
   }

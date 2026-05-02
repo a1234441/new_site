@@ -21,7 +21,10 @@ body {
     margin-bottom: 50px;
 }
 
-
+img {
+    max-width: 80%;  /* 画面幅に合わせて画像を縮小 */
+    height: auto;     /* 高さを自動調整 */
+}
 
 
 table {
