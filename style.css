@@ -7,7 +7,6 @@ body {
     align-items: center;
     font-weight: 300;
     color: #000;
-    /* bodyのデフォルトフォントサイズを設定。これがemやremの基準になる */
     font-size: 16px; /* PCでの基準サイズ */
 }
 
